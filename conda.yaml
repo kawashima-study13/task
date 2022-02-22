@@ -1,0 +1,19 @@
+name: s13t
+channels:
+- conda-forge
+dependencies:
+- python=3.9.7
+- psychopy=2021.2.3
+- pip
+- pip:
+  - psychtoolbox
+  - pygame
+  - pyo
+  - pyparallel; platform_system != "Windows"
+  - SoundFile; platform_system == "Windows"
+  - websocket_client
+  - pygame==2.1.2
+  - pyo==1.0.4
+  - pyparallel==0.2.2; platform_system != "Windows"
+  - SoundFile==0.10.3.post1; platform_system == "Windows"
+  - websocket_client==1.2.3
