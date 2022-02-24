@@ -1,6 +1,5 @@
 from __future__ import annotations
-from logging import FileHandler, config, getLogger, INFO
-from pathlib import Path
+from logging import config, getLogger
 
 from ..tool.io import load_json
 from ..tool.dataclass import Dictm

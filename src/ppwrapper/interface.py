@@ -1,4 +1,5 @@
 from sys import stdout
+from __future__ import annotations
 
 from psychopy import visual  # visual must be imported 1st
 from psychopy.hardware import keyboard
@@ -8,10 +9,12 @@ from ..const import BUTTONS
 
 
 class Display:
-    def __init__(self, full=False, bgcolor=(0,) * 3, txtcolor=(100,) * 3):
+    def __init__(self, full: bool=False,
+                 bgcolor: tuple[int, int, int]=(0,) * 3,
+                 txtcolor: tuple[int, int, int]=(100,) * 3):
         self.full = full
-        self.bgcolor=bgcolor
-        self.txtcolor=txtcolor
+        self.bgcolor = bgcolor
+        self.txtcolor = txtcolor
 
     def build(self):
         self.window = visual.Window(
@@ -47,12 +50,8 @@ class Button:
     def __init__(self):
         self.kb = keyboard.Keyboard()
 
-    def wait_till(self, keys, maxsec=float('inf')):
-        if keys:
-            keys += BUTTONS.ABORT
-        keys = self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
-        if keys[0] in BUTTONS.ABORT:
-            core.quit()
+    def wait_till(self, keys: list | tuple, maxsec: float=float('inf')):
+        self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
 
     def get_key(self):
         keys = self.kb.getKeys()
