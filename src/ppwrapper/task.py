@@ -23,9 +23,9 @@ class Task:
 
     def _set_logger(self, log_path):
         logger_config = load_json('config/logger.json')
-        logger_config['handlers']['fileHandler']['filename'] = log_path
+        logger_config['handlers']['logfile']['filename'] = log_path
         config.dictConfig(logger_config)
-        return getLogger(__name__)
+        return getLogger('commonlogger')
 
     def run(self):
         self._run_task_head()
@@ -62,11 +62,13 @@ class Task:
     def _run_block_tail(self):
         """Called from self._run_block(), override and use"""
 
-    def _run_trial(self, stim):
+    def _run_trial(self, stim=None):
         """Called from self._run_block(), override and use"""
         self.timer.trial.reset()
         len_trial = len(self.stimset[self.progress.block])
-        self.logger.info(f'{self.progress.trial + 1}/{len_trial}')
+        self.logger.info(''.join([
+                '-- Trial started. ',
+                f'({self.progress.trial + 1}/{len_trial})']))
 
 
 if __name__ == '__main__':

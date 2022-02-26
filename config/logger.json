@@ -8,13 +8,13 @@
     },
 
     "handlers": {
-        "consoleHandler": {
+        "console": {
             "class": "logging.StreamHandler",
             "level": "INFO",
             "formatter": "simple",
             "stream": "ext://sys.stdout"
         },
-        "fileHandler": {
+        "logfile": {
             "class": "logging.FileHandler",
             "level": "INFO",
             "formatter": "simple",
@@ -23,19 +23,9 @@
     },
 
     "loggers": {
-        "__main__": {
+        "commonlogger": {
             "level": "DEBUG",
-            "handlers": ["consoleHandler", "fileHandler"],
-            "propagate": false
-        },
-        "same_hierarchy": {
-            "level": "DEBUG",
-            "handlers": ["consoleHandler", "fileHandler"],
-            "propagate": false
-        },
-        "lower.sub": {
-            "level": "DEBUG",
-            "handlers": ["consoleHandler", "fileHandler"],
+            "handlers": ["console", "logfile"],
             "propagate": false
         }
     },
