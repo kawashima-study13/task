@@ -55,7 +55,7 @@ class Button:
     def __init__(self):
         self.kb = keyboard.Keyboard()
 
-    def clear_keyboard(self):
+    def clear(self):
         event.clearEvents()
         for buffer in self.kb._buffers.values():
             buffer.flush()
@@ -95,7 +95,7 @@ class Button:
         RT: init of this func -> press (not release)
         """
 
-        self.clear_keyboard()
+        self.clear()
         self.reset_clock()
         if False: # Doesn't work...why?
             core.wait(maxsec, hogCPUperiod=maxsec)

@@ -1,6 +1,8 @@
 from __future__ import annotations
 from logging import config, getLogger
 
+from psychopy.clock import Clock
+
 from ..tool.io import load_json
 from ..tool.dataclass import Dictm
 
@@ -16,6 +18,7 @@ class Task:
         self.cfg = cfg
         self.o_path = o_path
 
+        self.timer = Dictm(task=Clock(), block=Clock(), trial=Clock())
         self.progress: dict[int, int] = Dictm(block=0, trial=0)
 
     def _set_logger(self, log_path):
@@ -33,6 +36,7 @@ class Task:
 
     def _run_task_head(self):
         """Called from self.run(), override and use"""
+        self.timer.task.reset()
         self.logger.info('Task started.')
     
     def _run_task_tail(self):
@@ -50,6 +54,7 @@ class Task:
 
     def _run_block_head(self):
         """Called from self._run_block(), override and use"""
+        self.timer.block.reset()
         self.logger.info(''.join([
                 '- Block started. ',
                 f'({self.progress.block + 1}/{len(self.stimset)})']))
@@ -59,6 +64,7 @@ class Task:
 
     def _run_trial(self, stim):
         """Called from self._run_block(), override and use"""
+        self.timer.trial.reset()
         len_trial = len(self.stimset[self.progress.block])
         self.logger.info(f'{self.progress.trial + 1}/{len_trial}')
 
