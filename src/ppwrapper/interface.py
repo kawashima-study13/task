@@ -53,10 +53,11 @@ class Display:
 
 
 class Button:
-    def __init__(self):
+    def __init__(self, itvl_input=.05):
         self.kb = keyboard.Keyboard()
+        self.itvl_input = itvl_input
 
-    def clear(self):
+    def clear(self): # Psychopy's keyboard clear doesn't work
         event.clearEvents()
         for buffer in self.kb._buffers.values():
             buffer.flush()
@@ -80,6 +81,7 @@ class Button:
     def wait(self, sec: float):
         t0 = clock.Clock()
         while t0.getTime() <= sec:
+            core.wait(self.itvl_input)
             key = self.get_keyname()
             if key in BUTTONS.ABORT:
                 core.quit()
@@ -89,6 +91,7 @@ class Button:
         stdout.write('\n')
         stdout.flush()
         while True:
+            core.wait(self.itvl_input)
             inputs = self.get_keyname()
             if inputs:
                 break
