@@ -67,16 +67,12 @@ class Button:
     def reset_clock(self):
         self.kb.clock.reset()
 
-    def wait_till(
-        self, keys: Optional[list | tuple], maxsec: float=float('inf')):
+    def wait_key(
+        self, keys: Optional[list | tuple]=None, maxsec: float=float('inf')):
 
         self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
 
-    def get_keyname(self):
-        keys = self.kb.getKeys()
-        return keys[0].name if keys else None
-
-    def wait(self, sec):
+    def wait(self, sec: float):
         abortkey = self.kb.waitKeys(maxWait=sec, keyList=BUTTONS.ABORT)
         if abortkey:
             core.quit()
@@ -91,6 +87,10 @@ class Button:
                 break
             stdout.write('\r===== {:.1f} sec. ====='.format(t0.getTime()))
             stdout.flush()
+
+    def get_keyname(self):
+        keys = self.kb.getKeys()
+        return keys[0].name if keys else None
 
     def get_rt(self, maxsec: float, keys: list | tuple=None, allowdupl=False):
         """
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     display.disp_text((
         'Count 3 sec and press any key.'
         'Press any key to start.'))
-    button.wait_till(keys=None)
+    button.wait_key(keys=None)
     name, rt = button.get_rt(maxsec=5.)
     print(f'You pressed {name} at {rt:.3f} sec.')
 
