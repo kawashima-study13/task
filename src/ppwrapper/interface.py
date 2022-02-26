@@ -99,27 +99,6 @@ class Button:
         keys = self.kb.getKeys()
         return keys[0].name if keys else None
 
-    def get_rt(self, maxsec: float, keys: list | tuple=None, allowdupl=False):
-        """
-        Get reaction time during maxsec.
-        RT: init of this func -> press (not release)
-        """
-
-        self.clear()
-        self.reset_clock()
-        if False: # Doesn't work...why?
-            core.wait(maxsec, hogCPUperiod=maxsec)
-        if True:
-            t0 = clock.Clock()
-            t0.reset()
-            while t0.getTime() <= maxsec:
-                pass
-        keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
-        if len(keypress) == 0:
-            return None, None
-        keypress = keypress[-1] if allowdupl else keypress[0]
-        return keypress.name, keypress.rt
-
 
 if __name__ == '__main__':
     display = Display()
@@ -132,14 +111,6 @@ if __name__ == '__main__':
     for num in [1, 2, 3]:
         display.disp_text(num)
         button.wait(sec=1.)
-
-    display.disp_text((
-        'Count 3 sec and press any key.'
-        'Press any key to start.'))
-    button.wait_key(keys=None)
-    display.disp_text('START!')
-    name, rt = button.get_rt(maxsec=5.)
-    print(f'You pressed {name} at {rt:.3f} sec.')
 
     display.disp_text('Test keys, and press abort key to quit')
     while True:
