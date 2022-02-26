@@ -1,5 +1,6 @@
 from __future__ import annotations
 from sys import stdout
+from typing import Optional
 
 from psychopy import visual  # visual must be imported 1st
 from psychopy.hardware import keyboard
@@ -66,7 +67,9 @@ class Button:
     def reset_clock(self):
         self.kb.clock.reset()
 
-    def wait_till(self, keys: list | tuple, maxsec: float=float('inf')):
+    def wait_till(
+        self, keys: Optional[list | tuple], maxsec: float=float('inf')):
+
         self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
 
     def get_keyname(self):
