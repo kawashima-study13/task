@@ -37,4 +37,4 @@ assert len(stimset) == len(ids_probe) # use strict arg in python 3.10
 for stims, idx_probe in zip(stimset, ids_probe):
     stims[idx_probe] += PROBE_CODE
 
-np.savetxt(O_PATH, stimset, fmt='%d')
+np.savetxt(O_PATH, stimset, fmt='%d', delimiter=',')
