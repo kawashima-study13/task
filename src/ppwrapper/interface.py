@@ -70,7 +70,12 @@ class Button:
     def wait_key(
         self, keys: Optional[list | tuple]=None, maxsec: float=float('inf')):
 
-        self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
+        if keys:
+            keys = tuple(keys)
+            keys + (BUTTONS.ABORT,)
+        keys = self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
+        if keys[0] in BUTTONS.ABORT:
+            core.quit()
 
     def wait(self, sec: float):
         abortkey = self.kb.waitKeys(maxWait=sec, keyList=BUTTONS.ABORT)
