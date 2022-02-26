@@ -78,9 +78,11 @@ class Button:
             core.quit()
 
     def wait(self, sec: float):
-        abortkey = self.kb.waitKeys(maxWait=sec, keyList=BUTTONS.ABORT)
-        if abortkey:
-            core.quit()
+        t0 = clock.Clock()
+        while t0.getTime() <= sec:
+            key = self.get_keyname()
+            if key in BUTTONS.ABORT:
+                core.quit()
 
     def wait_with_stdtimer(self):
         t0 = clock.Clock()
@@ -135,6 +137,7 @@ if __name__ == '__main__':
         'Count 3 sec and press any key.'
         'Press any key to start.'))
     button.wait_key(keys=None)
+    display.disp_text('START!')
     name, rt = button.get_rt(maxsec=5.)
     print(f'You pressed {name} at {rt:.3f} sec.')
 
