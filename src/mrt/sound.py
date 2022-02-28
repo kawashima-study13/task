@@ -11,44 +11,50 @@ if platform.system() == 'Windows':
 
 
 class Beep:
-    def __init__(self, hz: float, dursec: float, use_psychopy: bool=True):
+    def __init__(self, hz: float, dursec: float,
+                 use_psychopy: bool=True, multithread: bool=True):
         if use_psychopy:
             prefs.hardware['audioLib'] = ['PTB']
             self.player = Sound(hz, secs=dursec)
         else:
             warnings.warn('Psychopy is not used, time lag suspected.')
             if platform.system() == 'Windows':
-                self.player = _WindowsBeep(hz, dursec)
+                self.player = _WindowsBeep(hz, dursec, multithread)
             else:
-                self.player = _MacBeep(hz, dursec)
+                self.player = _MacBeep(hz, dursec, multithread)
 
     def play(self):
         self.player.play()
 
 
-class BeepBase:
-    def __init__(self, hz: float, dursec: float):
+class OSBeep:
+    def __init__(self, hz: float, dursec: float, multithread: bool):
+        self.multithread = multithread
         self.hz = hz
         self.dursec = dursec
 
     def play(self):
-        subthread = Thread(target=self._play)
-        subthread.start()
+        if self.multithread:
+            subthread = Thread(target=self._play)
+            subthread.start()
+        else:
+            self._play()
+
 
     def _play(self):
         ...
 
 
-class _WindowsBeep(BeepBase):
-    def __init__(self, hz: float, dursec: float):
+class _WindowsBeep(OSBeep):
+    def __init__(self, hz: float, dursec: float, multithread: bool):
         super().__init__(hz, dursec)
 
     def _play(self):
         winsound.Beep(self.hz, self.dursec)
 
 
-class _MacBeep(BeepBase):
-    def __init__(self, hz: float, dursec: float):
+class _MacBeep(OSBeep):
+    def __init__(self, hz: float, dursec: float, multithread: bool):
         super().__init__(hz, dursec)
 
     def _play(self):
