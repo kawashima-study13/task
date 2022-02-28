@@ -42,3 +42,18 @@ class MRT(Task):
         type = 'odd' if odd else 'normal'
         self.log(f'--- Present {type} stim {dursec} sec.', CODES.MRT_BEEP)
         self.beep[type].play()
+
+
+if __name__ == '__main__':
+    from src.tool.io import load_config, load_csv
+    from src.ppwrapper.interface import Display, Button
+
+
+    display = Display()
+    button = Button()
+    display.build()
+
+    cfg = load_config('config/task.ini').mrt
+    stimset = load_csv('src/mrt/stim/stim_dbg.csv')
+    mrt = MRT(display, button, stimset, cfg, o_path='src/mrt/debug/debug.csv')
+    mrt.run()
