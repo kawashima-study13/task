@@ -1,16 +1,18 @@
 from __future__ import annotations
 from logging import config, getLogger
+from pathlib import Path
 
 from psychopy.clock import Clock
 
 from ..tool.io import load_json
 from ..tool.dataclass import Dictm
+from ..const import CODES
 
 
 class Task:
     def __init__(self, display, button,
-                 stimset: tuple[tuple], cfg: dict, o_path: str):
-        self.logger = self._set_logger(o_path + '.log')
+                 stimset: tuple[tuple], cfg: dict, o_path: str | Path):
+        self.logger = self._set_logger(str(o_path) + '.log')
 
         self.display = display
         self.button = button
@@ -27,6 +29,11 @@ class Task:
         config.dictConfig(logger_config)
         return getLogger('commonlogger')
 
+    def log(self, message: str | tuple, code: str):
+        if isinstance(message, tuple):
+            message = ''.join(message)
+        self.logger.info(message, extra={'code': code})
+
     def run(self):
         self._run_task_head()
         for i, stims in enumerate(self.stimset):
@@ -37,11 +44,11 @@ class Task:
     def _run_task_head(self):
         """Called from self.run(), override and use"""
         self.timer.task.reset()
-        self.logger.info('Task started.')
+        self.log('Task started.', CODES.TASK_START)
     
     def _run_task_tail(self):
         """Called from self.run(), override and use"""
-        self.logger.info('Task finished.')
+        self.log('Task finished.', CODES.TASK_FINISH)
 
     def _run_block(self, stims):
         self.stims = stims
@@ -55,9 +62,9 @@ class Task:
     def _run_block_head(self):
         """Called from self._run_block(), override and use"""
         self.timer.block.reset()
-        self.logger.info(''.join([
-                '- Block started. ',
-                f'({self.progress.block + 1}/{len(self.stimset)})']))
+        self.log(('- Block started. ',
+                  f'({self.progress.block + 1}/{len(self.stimset)})'),
+                 CODES.BLOCK_START)
 
     def _run_block_tail(self):
         """Called from self._run_block(), override and use"""
@@ -66,9 +73,9 @@ class Task:
         """Called from self._run_block(), override and use"""
         self.timer.trial.reset()
         len_trial = len(self.stimset[self.progress.block])
-        self.logger.info(''.join([
-                '-- Trial started. ',
-                f'({self.progress.trial + 1}/{len_trial})']))
+        self.log(('-- Trial started. ',
+                  f'({self.progress.trial + 1}/{len_trial})'),
+                 CODES.TRIAL_START)
 
 
 if __name__ == '__main__':

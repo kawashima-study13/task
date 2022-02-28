@@ -1,6 +1,6 @@
 from psychopy import core
 
-from ..const import BUTTONS
+from ..const import BUTTONS, CODES
 from ..ppwrapper.task import Task
 from .sound import Beep
 
@@ -34,10 +34,11 @@ class MRT(Task):
         if key := self.button.get_keyname():
             if key in BUTTONS.ABORT:
                 core.quit()
-            self.logger.info('---- {} was pressed ({:.6f}; {:.6f})'.format(
-                key, self.timer.trial.getTime(), self.timer.task.getTime()))
+            self.log('---- {} was pressed ({:.6f}; {:.6f})'.format(
+                key, self.timer.trial.getTime(), self.timer.task.getTime()),
+                CODES.MRT_PRESSED)
 
     def _present_beep(self, odd: bool, dursec: float):
         type = 'odd' if odd else 'normal'
-        self.logger.info(f'--- Present {type} stim {dursec} sec.')
+        self.log(f'--- Present {type} stim {dursec} sec.', CODES.MRT_BEEP)
         self.beep[type].play()

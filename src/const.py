@@ -8,3 +8,12 @@ BUTTONS = Dictm({
     'RIGHT': ['1', 'd', 'right'], # Blue
     'SUB'  : ['2', 's', 'down'] # Yellow
 })
+
+CODES = Dictm({
+    'TASK_START': 'C10',
+    'TASK_FINISH': 'C11',
+    'BLOCK_START': 'C20',
+    'TRIAL_START': 'C30',
+    'MRT_BEEP'   : 'C40',
+    'MRT_PRESSED': 'C41',
+})
