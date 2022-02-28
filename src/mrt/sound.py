@@ -11,14 +11,12 @@ if platform.system() == 'Windows':
 
 
 class Beep:
-    def __init__(self, hz: float, dursec: float):
-        prefs.hardware['audioLib'] = ['PTB']
-        try:
+    def __init__(self, hz: float, dursec: float, use_psychopy: bool=True):
+        if use_psychopy:
+            prefs.hardware['audioLib'] = ['PTB']
             self.player = Sound(hz, secs=dursec)
-        except:
-            warnings.warn('\n'.join([
-                "Coud not use Psychopy's Sound.",
-                "Time lag is suspected"]))
+        else:
+            warnings.warn('Psychopy is not used, time lag suspected.')
             if platform.system() == 'Windows':
                 self.player = _WindowsBeep(hz, dursec)
             else:
@@ -55,15 +53,22 @@ class _MacBeep(BeepBase):
 
     def _play(self):
         # Need SoX library. brew install sox
-        system('play -n synth %s sin %s' % (self.dursec, self.hz))
+        system('play -qn synth %s sin %s' % (self.dursec, self.hz))
 
 
 if __name__ == '__main__':
     from time import sleep
-    beep_a = Beep(500., 1.)
-    beep_b = Beep(1000., .5)
-    beep_a.play()
-    sleep(1.)
-    beep_b.play()
-    sleep(1.)
-    beep_a.play()
+
+    def test(use_psychopy):
+        beep_a = Beep(500., 1., use_psychopy)
+        beep_b = Beep(1000., .5, use_psychopy)
+        beep_a.play()
+        sleep(1.)
+        beep_b.play()
+        sleep(1.)
+        beep_a.play()
+
+    print('Test OS-based')
+    test(False)
+    print('Test Psychopy-based')
+    test(True)
