@@ -1,6 +1,7 @@
 from psychopy import core
 
 from ..const import BUTTONS, CODES
+from ..probe.probe import Probe
 from ..ppwrapper.task import Task
 from .sound import Beep
 
@@ -8,6 +9,7 @@ from .sound import Beep
 class MRT(Task):
     def _run_task_head(self):
         params = self.cfg.odd_hz, self.cfg.beep_dursec, self.cfg.use_ppsound
+        self.probe = Probe(self.display.window)
         self.beep = dict(odd=Beep(*params), normal=Beep(*params))
 
         super()._run_task_head()
@@ -15,6 +17,12 @@ class MRT(Task):
         self.button.wait_key(keys=None)
         self.display.disp_text('+')
         self.button.clear()
+
+    def _run_block_tail(self):
+        self.log('--- Probe presented', CODES.PROBE)
+        rate = self.probe.present()
+        self.log(f'---- Answer: {rate}', CODES.PROBE)
+        self.display.disp_text('+')
 
     def _run_trial(self, stim: str):
         dursec_trial = sum([self.cfg.itvl_sec_pre,

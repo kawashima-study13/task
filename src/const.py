@@ -14,6 +14,7 @@ CODES = Dictm({
     'TASK_FINISH': 'C11',
     'BLOCK_START': 'C20',
     'TRIAL_START': 'C30',
-    'MRT_BEEP'   : 'C40',
-    'MRT_PRESSED': 'C41',
+    'PROBE'      : 'C40',
+    'MRT_BEEP'   : 'C50',
+    'MRT_PRESSED': 'C51',
 })
