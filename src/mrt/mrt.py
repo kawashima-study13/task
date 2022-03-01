@@ -45,9 +45,14 @@ class MRT(Task):
 
 
 if __name__ == '__main__':
+    from os import system
+    from pathlib import Path
     from src.tool.io import load_config, load_csv
     from src.ppwrapper.interface import Display, Button
 
+
+    log_path = Path('src/mrt/debug/debug.csv.log')
+    log_path.unlink(missing_ok=True)
 
     display = Display()
     button = Button()
@@ -55,5 +60,8 @@ if __name__ == '__main__':
 
     cfg = load_config('config/task.ini').mrt
     stimset = load_csv('src/mrt/stim/stim_dbg.csv')
-    mrt = MRT(display, button, stimset, cfg, o_path='src/mrt/debug/debug.csv')
+    mrt = MRT(display, button, stimset, cfg,
+              o_path=log_path.parent / log_path.stem)
     mrt.run()
+
+    system('python -m src.mrt.debug.debug')
