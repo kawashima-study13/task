@@ -47,7 +47,7 @@ class OSBeep:
 
 class _WindowsBeep(OSBeep):
     def __init__(self, hz: float, dursec: float, multithread: bool):
-        super().__init__(hz, dursec)
+        super().__init__(hz, dursec, multithread)
 
     def _play(self):
         winsound.Beep(self.hz, self.dursec)
@@ -55,7 +55,7 @@ class _WindowsBeep(OSBeep):
 
 class _MacBeep(OSBeep):
     def __init__(self, hz: float, dursec: float, multithread: bool):
-        super().__init__(hz, dursec)
+        super().__init__(hz, dursec, multithread)
 
     def _play(self):
         # Need SoX library. brew install sox
