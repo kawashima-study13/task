@@ -1,4 +1,6 @@
 import doctest
+import csv
+
 import numpy as np
 
 from ...tool.io import load_config
@@ -24,6 +26,25 @@ def validate_ids_itvl(ids, n_trial, min_interval) -> bool:
     itvls = ids + np.insert(n_aft_probe[:-1], 0, 0)
     return (itvls >= min_interval).all()
 
+def probe_block_end(stimset: np.array) -> np.array:
+    """
+    >>> foo = np.array([[0 , 11, 0 , 1 , 0],
+                        [1 , 0 , 0 , 10, 1],
+                        [0 , 10, 0 , 0 , 1])
+    >>> probe_block_end(foo)
+    [[0, 11], [0, 1, 0, 1, 0, 0, 10], [1, 0, 10], [0, 0, 1]]
+    """
+
+    stims = []
+    stimset_ = []
+    for stim in stimset.flatten():
+        stims.append(stim)
+        if stim >= PROBE_CODE:
+            stimset_.append(stims)
+            stims = []
+    stimset_.append(stims)
+    return stimset_
+
 doctest.testmod()
 
 stimset = (np.random.rand(cfg.n_block, cfg.n_trial) <= cfg.rate_odd)
@@ -38,4 +59,8 @@ assert len(stimset) == len(ids_probe) # use strict arg in python 3.10
 for stims, idx_probe in zip(stimset, ids_probe):
     stims[idx_probe] += PROBE_CODE
 
-np.savetxt(O_PATH, stimset, fmt='%d', delimiter=',')
+stimset = probe_block_end(stimset)
+
+with open(O_PATH, 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(stimset)

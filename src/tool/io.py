@@ -26,7 +26,12 @@ def load_config(path):
                  for section in parser.sections()})
 
 
-def load_csv(path):
+def load_csv(path, rm_empty=True):
     with open(path) as f:
         reader = csv.reader(f)
-        return [row for row in reader]
+        rows = []
+        for row in reader:
+            if rm_empty:
+                row = [cell for cell in row if cell]
+            rows.append(row)
+    return rows
