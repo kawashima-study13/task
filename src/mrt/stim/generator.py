@@ -1,12 +1,12 @@
 import doctest
 import numpy as np
 
-np.random.seed(2022)
+from ...tool.io import load_config
 
-N_BLOCK: int = 18
-N_TRIAL: int = 50
-RATE_ODD: float = .2
-MIN_INTERVAL: int = 6
+
+
+np.random.seed(2022)
+cfg = load_config('config/stim.ini').mrt
 PROBE_CODE: int = 10
 O_PATH = 'src/mrt/stim/stim.csv'
 
@@ -26,11 +26,12 @@ def validate_ids_itvl(ids, n_trial, min_interval) -> bool:
 
 doctest.testmod()
 
-stimset = (np.random.rand(N_BLOCK, N_TRIAL) <= RATE_ODD).astype(int)
+stimset = (np.random.rand(cfg.n_block, cfg.n_trial) <= cfg.rate_odd)
+stimset = stimset.astype(int)
 
 while True:
-    ids_probe = np.random.randint(0, N_TRIAL - 1, N_BLOCK)
-    if validate_ids_itvl(ids_probe, N_TRIAL, MIN_INTERVAL):
+    ids_probe = np.random.randint(0, cfg.n_trial - 1, cfg.n_block)
+    if validate_ids_itvl(ids_probe, cfg.n_trial, cfg.min_interval):
         break
 
 assert len(stimset) == len(ids_probe) # use strict arg in python 3.10
