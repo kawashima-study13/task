@@ -1,6 +1,7 @@
 from pathlib import Path
 from psychopy import visual
 
+from ..tool.io import load_config
 from ..const import BUTTONS
 from src.ppwrapper.interface import Display
 
@@ -12,6 +13,7 @@ class Probe:
         path = Path(__file__).parent / 'intro.png'
         self.intro = visual.ImageStim(window, image=path)
 
+        color = load_config('config/task.ini').color_name
         N_TICKS = 5
         START_TICK = 2
         self.scale = visual.RatingScale(
@@ -21,6 +23,8 @@ class Probe:
             scale=None,
             marker='glow',
             markerStart=START_TICK,
+            markerColor=color.highlight,
+            lineColor=color.main,
             showValue=False,
             showAccept=False,
             acceptKeys=BUTTONS.SUB,
