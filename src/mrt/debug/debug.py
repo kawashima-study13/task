@@ -46,11 +46,13 @@ deltaset = (present_beep - trial_start,
 
 fig, axes = plt.subplots(1, 3)
 labels = ('trial start -> beep', 'beep -> next trial', 'beep -> button')
-for ax, data, ylabel in zip(axes, deltaset, labels):
+ideals = (
+    cfg.itvl_sec_pre, cfg.itvl_sec_post + cfg.beep_dursec, 0.)
 for ax, data, ylabel, ideal in zip(axes, deltaset, labels, ideals):
     data = data.astype(float) / NS_TO_SEC
     sns.stripplot(y=data, ax=ax)
     sns.boxplot(y=data, ax=ax, color='gray')
+    ax.plot(ax.get_xlim(), (ideal, ideal))
     ax.set_ylabel(ylabel)
     plt.tight_layout()
 fig.savefig(o_path)
