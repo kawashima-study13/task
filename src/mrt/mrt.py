@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import pandas as pd
 from psychopy import core
 
 from ..const import BUTTONS, CODES
@@ -7,6 +10,11 @@ from .sound import Beep
 
 
 class MRT(Task):
+    def __init__(self, display, button,
+                 stimset: tuple[tuple], cfg: dict, o_path: str | Path):
+        super().__init__(display, button, stimset, cfg, o_path)
+        self.data = []
+
     def _run_task_head(self):
         params = self.cfg.odd_hz, self.cfg.beep_dursec, self.cfg.use_ppsound
         self.probe = Probe(self.display.window)
@@ -21,7 +29,7 @@ class MRT(Task):
     def _run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)
         rate = self.probe.present()
-        self.log(f'---- Answer: {rate}', CODES.PROBE)
+        self.log(f'---- Answer: {rate}', CODES.CHOICE, rate)
         self.display.disp_text('+')
 
     def _run_trial(self, stim: str):
@@ -50,6 +58,20 @@ class MRT(Task):
         type = 'odd' if odd else 'normal'
         self.log(f'--- Present {type} stim {dursec} sec.', CODES.MRT_BEEP)
         self.beep[type].play()
+
+    def log(self, message: str | tuple, code: str, value=None):
+        super().log(message, code)
+        self.data.append([
+            self.progress.block, self.progress.trial, code,
+            self.timer.task.getTime(), self.timer.block.getTime(),
+            self.timer.trial.getTime(), value])
+
+    def _run_task_tail(self):
+        super()._run_task_tail()
+        data = pd.DataFrame(self.data)
+        data.columns = ['block', 'trial', 'code',
+                        'sec_task', 'sec_block', 'sec_trial', 'value']
+        data.to_csv(self.o_path, index=False)
 
 
 if __name__ == '__main__':
