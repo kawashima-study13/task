@@ -4,6 +4,7 @@ import platform
 from os import system
 
 from psychopy import prefs
+prefs.hardware['audioLib'] = ['PTB']
 from psychopy.sound import Sound
 
 if platform.system() == 'Windows':
@@ -14,7 +15,6 @@ class Beep:
     def __init__(self, hz: float, dursec: float,
                  use_psychopy: bool=True, multithread: bool=True):
         if use_psychopy:
-            prefs.hardware['audioLib'] = ['PTB']
             self.player = Sound(hz, secs=dursec)
         else:
             warnings.warn('Psychopy is not used, time lag suspected.')
