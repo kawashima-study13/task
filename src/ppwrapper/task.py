@@ -12,6 +12,9 @@ from ..const import CODES
 class Task:
     def __init__(self, display, button,
                  stimset: tuple[tuple], cfg: dict, o_path: str | Path):
+        while o_path.exists():
+            input(f'Save path exists. resolve and press Enter: {o_path}')
+
         self.logger = self._set_logger(str(o_path) + '.log')
 
         self.display = display
