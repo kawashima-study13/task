@@ -32,6 +32,7 @@ class Display:
 
         self.text = visual.TextStim(
             win=self.window,
+            font='YuGothic',
             pos=(0., 0.),
             height=40,
             color=self.txtcolor,
@@ -112,7 +113,7 @@ if __name__ == '__main__':
 
     display.build()
 
-    display.disp_text('Wait with stdtimer (press any key)')
+    display.disp_text('STDタイマーで待機テスト (press any key)')
     button.wait_with_stdtimer()
     for num in [1, 2, 3]:
         display.disp_text(num)
