@@ -6,12 +6,7 @@ dependencies:
 - psychopy=2021.2.3
 - pip
 - pip:
-  - psychtoolbox
-  - pygame
-  - pyo
-  - pyparallel; platform_system != "Windows"
-  - SoundFile; platform_system == "Windows"
-  - websocket_client
+  - psychtoolbox==3.0.18.2
   - pygame==2.1.2
   - pyo==1.0.4
   - pyparallel==0.2.2; platform_system != "Windows"
