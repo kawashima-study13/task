@@ -23,53 +23,53 @@ class Task:
         self.timer = Dictm(task=Clock(), block=Clock(), trial=Clock())
         self.progress: dict[int, int] = Dictm(block=0, trial=0)
 
+    def log(self, message: str | tuple, code: str):
+        if isinstance(message, tuple):
+            message = ''.join(message)
+        self.logger.info(message, extra={'code': code})
+
     def _set_logger(self, log_path):
         logger_config = load_json('config/logger.json')
         logger_config['handlers']['logfile']['filename'] = log_path
         config.dictConfig(logger_config)
         return getLogger('commonlogger')
 
-    def log(self, message: str | tuple, code: str):
-        if isinstance(message, tuple):
-            message = ''.join(message)
-        self.logger.info(message, extra={'code': code})
-
     def run(self):
-        self._run_task_head()
+        self.run_task_head()
         for i, stims in enumerate(self.stimset):
             self.progress.block = i
-            self._run_block(stims)
-        self._run_task_tail()
+            self.run_block(stims)
+        self.run_task_tail()
 
-    def _run_task_head(self):
+    def run_task_head(self):
         """Called from self.run(), override and use"""
         self.timer.task.reset()
         self.log('Task started.', CODES.TASK_START)
     
-    def _run_task_tail(self):
+    def run_task_tail(self):
         """Called from self.run(), override and use"""
         self.log('Task finished.', CODES.TASK_FINISH)
 
-    def _run_block(self, stims):
+    def run_block(self, stims):
         self.stims = stims
 
-        self._run_block_head()
+        self.run_block_head()
         for i, stim in enumerate(stims):
             self.progress.trial = i
-            self._run_trial(stim)
-        self._run_block_tail()
+            self.run_trial(stim)
+        self.run_block_tail()
 
-    def _run_block_head(self):
+    def run_block_head(self):
         """Called from self._run_block(), override and use"""
         self.timer.block.reset()
         self.log(('- Block started. ',
                   f'({self.progress.block + 1}/{len(self.stimset)})'),
                  CODES.BLOCK_START)
 
-    def _run_block_tail(self):
+    def run_block_tail(self):
         """Called from self._run_block(), override and use"""
 
-    def _run_trial(self, stim=None):
+    def run_trial(self, stim=None):
         """Called from self._run_block(), override and use"""
         self.timer.trial.reset()
         len_trial = len(self.stimset[self.progress.block])
