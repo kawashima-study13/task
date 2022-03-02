@@ -8,6 +8,7 @@ dependencies:
 - pip:
   - psychtoolbox==3.0.18.2
   - pygame==2.1.2
+  - pyglet==1.4.10
   - pyo==1.0.4
   - pyparallel==0.2.2; platform_system != "Windows"
   - SoundFile==0.10.3.post1; platform_system == "Windows"
