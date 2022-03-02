@@ -25,23 +25,27 @@ class MRT(Task):
 
     def run_task_head(self):
         params = self.cfg.odd_hz, self.cfg.beep_dursec, self.cfg.use_ppsound
+        if not self.display.is_built:
+            self.display.build() # For Probe()
         self.probe = Probe(self.display.window)
         self.beep = dict(odd=Beep(*params), normal=Beep(*params))
 
         super().run_task_head()
-        self.display.disp_text('Press any key to start.')
-        self.button.wait_key(keys=None)
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
 
     def run_task_tail(self):
         self._run_baseline(self.cfg.sec_baseline_post, 'post')
         super().run_task_tail()
 
-        self.display.disp_text('お疲れさまでした。\nそのままお待ちください。')
+        self.display.disp_text(('お疲れさまでした。', 'そのままお待ちください。',
+                                'saving...'))
         data = pd.DataFrame(self.data)
         data.columns = ['block', 'trial', 'code',
                         'sec_task', 'sec_block', 'sec_trial', 'value']
         data.to_csv(self.o_path, index=False)
+        self.display.disp_text(('お疲れさまでした。', 'そのままお待ちください。',
+                                'saving...complete'))
+        self.button.wait_key()
 
     def _run_baseline(self, sec: float, timing: Literal['pre', 'post']):
         code = CODES.BASE_PRE if timing == 'pre' else CODES.BASE_POST

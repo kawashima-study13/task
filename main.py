@@ -14,4 +14,5 @@ sub_dir = SubDir().ask_id('Enter sub. ID (s3001~): ').make_dir()
 
 mrt = MRT(
     display, button, stimset, cfg.mrt, o_path=sub_dir.get_dir() / 'mrt.csv')
+input('Press enter key to start MRT.')
 mrt.run()

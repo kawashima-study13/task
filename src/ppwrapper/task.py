@@ -20,8 +20,6 @@ class Task:
         self.cfg = cfg
         self.o_path = o_path
 
-        if not self.display.is_built:
-            self.display.build()
         self.timer = Dictm(task=Clock(), block=Clock(), trial=Clock())
         self.progress: dict[int, int] = Dictm(block=0, trial=0)
 
@@ -45,6 +43,10 @@ class Task:
 
     def run_task_head(self):
         """Called from self.run(), override and use"""
+        if not self.display.is_built:
+            self.display.build()
+        self.display.disp_text('Press any key to start.')
+        self.button.wait_key(keys=None)
         self.timer.task.reset()
         self.log('Task started.', CODES.TASK_START)
     
