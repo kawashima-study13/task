@@ -50,7 +50,8 @@ class _WindowsBeep(OSBeep):
         super().__init__(hz, dursec, multithread)
 
     def _play(self):
-        winsound.Beep(self.hz, self.dursec)
+        SEC_TO_MSEC = 1_000.
+        winsound.Beep(int(self.hz), int(self.dursec * SEC_TO_MSEC))
 
 
 class _MacBeep(OSBeep):
