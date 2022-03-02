@@ -24,11 +24,12 @@ class MRT(Task):
             self.timer.trial.getTime(), value])
 
     def run_task_head(self):
-        params = self.cfg.odd_hz, self.cfg.beep_dursec, self.cfg.use_ppsound
+        params = self.cfg.beep_dursec, self.cfg.use_ppsound
         if not self.display.is_built:
             self.display.build() # For Probe()
         self.probe = Probe(self.display.window)
-        self.beep = dict(odd=Beep(*params), normal=Beep(*params))
+        self.beep = dict(odd=Beep(self.cfg.odd_hz, *params),
+                         normal=Beep(self.cfg.normal_hz, *params))
 
         super().run_task_head()
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
