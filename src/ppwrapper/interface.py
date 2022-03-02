@@ -41,11 +41,11 @@ class Display:
     def close(self):
         self.window.close()
 
-    def disp_text(self, text: str | list[str]):
+    def disp_text(self, text: str | list[str] | tuple[str]):
         """
-        If list, contents will be concatenated as new line.
+        If list or tuple, contents will be concatenated as new line.
         """
-        if isinstance(text, list):
+        if isinstance(text, (list, tuple)):
             text = '\n'.join(text)
         self.text.text = text
         self.text.draw()

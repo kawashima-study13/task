@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Literal
 
 import pandas as pd
 from psychopy import core
@@ -30,14 +31,23 @@ class MRT(Task):
         super().run_task_head()
         self.display.disp_text('Press any key to start.')
         self.button.wait_key(keys=None)
-        self.display.disp_text('+')
+        self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
 
     def run_task_tail(self):
+        self._run_baseline(self.cfg.sec_baseline_post, 'post')
         super().run_task_tail()
+
+        self.display.disp_text('お疲れさまでした。\nそのままお待ちください。')
         data = pd.DataFrame(self.data)
         data.columns = ['block', 'trial', 'code',
                         'sec_task', 'sec_block', 'sec_trial', 'value']
         data.to_csv(self.o_path, index=False)
+
+    def _run_baseline(self, sec: float, timing: Literal['pre', 'post']):
+        code = CODES.BASE_PRE if timing == 'pre' else CODES.BASE_POST
+        self.log(f'-- Baseline ({timing}) start', code)
+        self.display.disp_text('+')
+        self.button.wait(sec)
 
     def run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)

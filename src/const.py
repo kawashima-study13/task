@@ -16,6 +16,8 @@ CODES = Dictm({
     'TRIAL_START': 'C30',
     'PROBE'      : 'C40',
     'CHOICE'     : 'C41',
-    'MRT_BEEP'   : 'C50',
-    'MRT_PRESSED': 'C51',
+    'BASE_PRE'   : 'C50',
+    'BASE_POST'  : 'C51',
+    'MRT_BEEP'   : 'C60',
+    'MRT_PRESSED': 'C61',
 })
