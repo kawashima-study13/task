@@ -16,6 +16,7 @@ class Display:
         self.full = full
         self.bgcolor = bgcolor
         self.txtcolor = txtcolor
+        self.is_built = False
 
     def build(self):
         self.window = visual.Window(
@@ -37,6 +38,8 @@ class Display:
             colorSpace='rgb255',
             alignText='center',
             units='pix')
+
+        self.is_built = True
 
     def close(self):
         self.window.close()

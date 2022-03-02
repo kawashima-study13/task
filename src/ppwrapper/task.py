@@ -20,6 +20,8 @@ class Task:
         self.cfg = cfg
         self.o_path = o_path
 
+        if not self.display.is_built:
+            self.display.build()
         self.timer = Dictm(task=Clock(), block=Clock(), trial=Clock())
         self.progress: dict[int, int] = Dictm(block=0, trial=0)
 
