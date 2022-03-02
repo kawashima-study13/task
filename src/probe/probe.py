@@ -10,7 +10,7 @@ class Probe:
     def __init__(self, window):
         self.window = window
 
-        path = Path(__file__).parent / 'intro.png'
+        path = Path(__file__).parent / 'intro.jpg'
         self.intro = visual.ImageStim(window, image=path)
 
         color = load_config('config/task.ini').color_name
