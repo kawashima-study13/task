@@ -12,4 +12,5 @@ dependencies:
   - pyo==1.0.4
   - pyparallel==0.2.2; platform_system != "Windows"
   - SoundFile==0.10.3.post1; platform_system == "Windows"
+  - pyserial==3.5
   - seaborn

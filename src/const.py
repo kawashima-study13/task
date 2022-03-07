@@ -21,3 +21,8 @@ CODES = Dictm({
     'MRT_BEEP'   : 'C60',
     'MRT_PRESSED': 'C61',
 })
+
+CODES_TO_LOG = [
+    CODES.PROBE,
+    CODES.MRT_PRESSED, # Overwrap risk?
+]

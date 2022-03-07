@@ -4,7 +4,8 @@ from typing import Literal
 import pandas as pd
 from psychopy import core
 
-from ..const import BUTTONS, CODES
+from ..tool.serial import Serial
+from ..const import BUTTONS, CODES, CODES_TO_LOG
 from ..probe.probe import Probe
 from ..ppwrapper.task import Task
 from .sound import Beep
@@ -15,13 +16,19 @@ class MRT(Task):
                  stimset: tuple[tuple], cfg: dict, o_path: str | Path):
         super().__init__(display, button, stimset, cfg, o_path)
         self.data = []
+        self.serial = Serial(cfg.comname) if cfg.comname else None
 
     def log(self, message: str | tuple, code: str, value=None):
         super().log(message, code)
+        self._trigger(code)
         self.data.append([
             self.progress.block, self.progress.trial, code,
             self.timer.task.getTime(), self.timer.block.getTime(),
             self.timer.trial.getTime(), value])
+
+    def _trigger(self, code: str):
+        if self.serial and (code in CODES_TO_LOG):
+            self.serial.write(code)
 
     def run_task_head(self):
         params = self.cfg.beep_dursec, self.cfg.use_ppsound
