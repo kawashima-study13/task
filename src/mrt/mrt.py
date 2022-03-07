@@ -59,6 +59,7 @@ class MRT(Task):
         rate = self.probe.present()
         self.log(f'---- Answer: {rate}', CODES.CHOICE, rate)
         self.display.disp_text('+')
+        self.button.clear()
 
     def run_trial(self, stim: str):
         dursec_trial = sum([self.cfg.itvl_sec_pre,
