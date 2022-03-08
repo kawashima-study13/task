@@ -10,19 +10,16 @@ BUTTONS = Dictm({
 })
 
 CODES = Dictm({
-    'TASK_START': 'C10',
-    'TASK_FINISH': 'C11',
-    'BLOCK_START': 'C20',
-    'TRIAL_START': 'C30',
-    'PROBE'      : 'C40',
-    'CHOICE'     : 'C41',
-    'BASE_PRE'   : 'C50',
-    'BASE_POST'  : 'C51',
-    'MRT_BEEP'   : 'C60',
-    'MRT_PRESSED': 'C61',
+    'TASK_START' : 'C11',
+    'TASK_FINISH': 'C12',
+    'BLOCK_START': 'C13',
+    'TRIAL_START': 'C14',
+    'BASE_PRE'   : 'C15',
+    'BASE_POST'  : 'C16',
+    'PROBE'      : 'C20',
+    'CHOICE'     : 'C21',
+    'MRT_BEEP'   : 'C22',
+    'MRT_PRESSED': 'C23',
 })
 
-CODES_TO_LOG = [
-    CODES.PROBE,
-    CODES.MRT_PRESSED, # Overwrap risk?
-]
+CODES_TO_LOG = None # Set None and all codes will be annotated

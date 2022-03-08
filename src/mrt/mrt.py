@@ -27,8 +27,8 @@ class MRT(Task):
             self.timer.trial.getTime(), value])
 
     def _trigger(self, code: str):
-        if self.serial and (code in CODES_TO_LOG):
-            self.serial.write(code)
+        if self.serial and ((CODES_TO_LOG is None) or (code in CODES_TO_LOG)):
+            self.serial.write(int(code[1:]))
 
     def run_task_head(self):
         params = self.cfg.beep_dursec, self.cfg.use_ppsound
