@@ -5,7 +5,7 @@ import serial
 
 
 class Serial:
-    def __init__(self, comname: str, rate: float=9600., dursec=.001):
+    def __init__(self, comname: str, rate: float=9600., dursec: float=.01):
         self.OFFCODE = 0
         self.dursec = dursec
         self.ser = serial.Serial(comname, rate)
