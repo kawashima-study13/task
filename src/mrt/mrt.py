@@ -4,20 +4,41 @@ from typing import Literal
 import pandas as pd
 from psychopy import core
 
-from ..const import BUTTONS, CODES
+from ..tool.serial import Serial
+from ..tool.xid import XID
+from ..const import BUTTONS, CODES, CODES_TO_LOG
 from ..probe.probe import Probe
 from ..ppwrapper.task import Task
 from .sound import Beep
 
 
 class MRT(Task):
+    class _Trigger:
+        class DammyWriter:
+            def write():
+                pass
+
+        def __init__(self, cfg: dict, mode: Literal['off', 'serial', 'xid']):
+            if mode == 'off':
+                self.writer = self.DammyWriter()
+            if mode == 'serial':
+                self.writer = Serial(cfg.comname, dursec=cfg.pulse_dursec)
+            if mode == 'xid':
+                self.writer = XID(pulse_dursec=cfg.pulse_dursec)
+
+        def write(self, code):
+            if (CODES_TO_LOG is None) or (code in CODES_TO_LOG):
+                self.writer.write(int(code[1:]))
+
     def __init__(self, display, button,
                  stimset: tuple[tuple], cfg: dict, o_path: str | Path):
         super().__init__(display, button, stimset, cfg, o_path)
         self.data = []
+        self.trigger = self._Trigger(cfg, mode=cfg.trigger_mode)
 
     def log(self, message: str | tuple, code: str, value=None):
         super().log(message, code)
+        self.trigger.write(code)
         self.data.append([
             self.progress.block, self.progress.trial, code,
             self.timer.task.getTime(), self.timer.block.getTime(),
