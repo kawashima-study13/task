@@ -5,7 +5,6 @@ import pandas as pd
 from psychopy import core
 
 from ..tool.serial import Serial
-from ..tool.xid import XID
 from ..const import BUTTONS, CODES, CODES_TO_LOG
 from ..probe.probe import Probe
 from ..ppwrapper.task import Task
@@ -15,7 +14,7 @@ from .sound import Beep
 class MRT(Task):
     class _Trigger:
         class DammyWriter:
-            def write():
+            def write(*args, **kwargs):
                 pass
 
         def __init__(self, cfg: dict, mode: Literal['off', 'serial', 'xid']):
@@ -24,6 +23,7 @@ class MRT(Task):
             if mode == 'serial':
                 self.writer = Serial(cfg.comname, dursec=cfg.pulse_dursec)
             if mode == 'xid':
+                from ..tool.xid import XID  # error if driver is not installed
                 self.writer = XID(pulse_dursec=cfg.pulse_dursec)
 
         def write(self, code):
