@@ -83,11 +83,14 @@ class MRT(Task):
         self.button.clear()
 
     def run_trial(self, stim: str):
+        super().run_trial()
+
+        trialname = 'ODD' if int(stim) > 0 else 'NORMAL'
+        self.log(f'--- It is {trialname} trial.', CODES.ODD_TRIAL)
+
         dursec_trial = sum([self.cfg.itvl_sec_pre,
                             self.cfg.beep_dursec,
                             self.cfg.itvl_sec_post])
-
-        super().run_trial()
         while self.timer.trial.getTime() <= self.cfg.itvl_sec_pre:
             core.wait(self.button.itvl_input)
             self._get_press()

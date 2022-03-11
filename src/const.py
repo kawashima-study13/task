@@ -27,4 +27,18 @@ CODES = Dictm({ # Start timings
     'PRESSED'    : 'C25',
 })
 
-CODES_TO_LOG = None # Set None and all codes will be annotated
+CODES_TO_LOG = [  # Set None and all codes will be annotated
+    # General
+    CODES.TASK,
+    CODES.FIN_ALL,
+    CODES.BASE_PRE,
+    CODES.BASE_POST,
+
+    # MRT
+    CODES.ODD_TRIAL,
+    CODES.NORM_TRIAL,
+    CODES.PROBE,
+    CODES.CHOICE,
+    CODES.BEEP,
+    CODES.PRESSED,
+]
