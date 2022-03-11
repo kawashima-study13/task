@@ -69,12 +69,6 @@ class MRT(Task):
                                 'saving...complete'))
         self.button.wait_key()
 
-    def _run_baseline(self, sec: float, timing: Literal['pre', 'post']):
-        code = CODES.BASE_PRE if timing == 'pre' else CODES.BASE_POST
-        self.log(f'-- Baseline ({timing}) start', code)
-        self.display.disp_text('+')
-        self.button.wait(sec)
-
     def run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)
         rate = self.probe.present()

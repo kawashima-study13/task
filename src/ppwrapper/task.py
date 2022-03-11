@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Literal
 from logging import config, getLogger
 from pathlib import Path
 
@@ -84,6 +85,12 @@ class Task:
         self.log(('-- Trial started. ',
                   f'({self.progress.trial + 1}/{len_trial})'),
                  CODES.TRIAL)
+
+    def _run_baseline(self, sec: float, timing: Literal['pre', 'post']):
+        code = CODES.BASE_PRE if timing == 'pre' else CODES.BASE_POST
+        self.log(f'-- Baseline ({timing}) start', code)
+        self.display.disp_text('+')
+        self.button.wait(sec)
 
 
 if __name__ == '__main__':
