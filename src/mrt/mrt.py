@@ -3,9 +3,9 @@ from typing import Literal
 
 import pandas as pd
 from psychopy import core
-from pyxid2 import get_xid_devices
 
 from ..tool.serial import Serial
+from ..tool.xid import XID
 from ..const import BUTTONS, CODES, CODES_TO_LOG
 from ..probe.probe import Probe
 from ..ppwrapper.task import Task
@@ -20,42 +20,15 @@ class MRT(Task):
 
         def __init__(self, cfg: dict, mode: Literal['off', 'serial', 'xid']):
             if mode == 'off':
-                self._write = self.no_write
+                self.writer = self.DammyWriter()
             if mode == 'serial':
-                self.serial = Serial(cfg.comname, dursec=cfg.pulse_dursec)
-                self._write = self.write_serial
+                self.writer = Serial(cfg.comname, dursec=cfg.pulse_dursec)
             if mode == 'xid':
-                while True:
-                    devices = get_xid_devices()
-                    if len(devices) == 1:
-                        break
-                    if len(devices) == 0:
-                        print('No XID devices found.')
-                    if len(devices) > 1:
-                        print('More than one device found.')
-                    input('Press Enter key to retry.')
-                self.xid = devices[0]
-                SEC_TO_MSEC = 1000
-                self.xid.set_pulse_duration(
-                    int(cfg.pulse_dursec * SEC_TO_MSEC))
-                self._write = self.write_xid
+                self.writer = XID(pulse_dursec=cfg.pulse_dursec)
 
         def write(self, code):
             if (CODES_TO_LOG is None) or (code in CODES_TO_LOG):
-                self._write(int(code[1:]))
-
-        def _write(self, *args, **kwargs):
-            ... # Defined by __init__
-
-        def write_serial(self, code):
-            self.serial.write(code)
-
-        def write_xid(self, code):
-            self.xid.activate_line(bitmask=code)
-
-        def no_write(self, code):
-            pass
-
+                self.writer.write(int(code[1:]))
 
     def __init__(self, display, button,
                  stimset: tuple[tuple], cfg: dict, o_path: str | Path):
