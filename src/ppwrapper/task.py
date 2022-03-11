@@ -12,6 +12,7 @@ from ..const import CODES
 class Task:
     def __init__(self, display, button,
                  stimset: tuple[tuple], cfg: dict, o_path: str | Path):
+        o_path = Path(o_path)
         while o_path.exists():
             input(f'Save path exists. resolve and press Enter: {o_path}')
 
