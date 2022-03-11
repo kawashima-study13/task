@@ -9,17 +9,22 @@ BUTTONS = Dictm({
     'SUB'  : ['2', 's', 'down'] # Yellow
 })
 
-CODES = Dictm({
-    'TASK_START' : 'C11',
-    'TASK_FINISH': 'C12',
-    'BLOCK_START': 'C13',
-    'TRIAL_START': 'C14',
-    'BASE_PRE'   : 'C15',
-    'BASE_POST'  : 'C16',
-    'PROBE'      : 'C20',
-    'CHOICE'     : 'C21',
-    'MRT_BEEP'   : 'C22',
-    'MRT_PRESSED': 'C23',
+CODES = Dictm({ # Start timings
+    # General
+    'TASK'       : 'C10',
+    'FIN_ALL'    : 'C11',
+    'BLOCK'      : 'C12',
+    'TRIAL'      : 'C13',
+    'BASE_PRE'   : 'C14',
+    'BASE_POST'  : 'C15',
+
+    # MRT
+    'ODD_TRIAL'  : 'C20',
+    'NORM_TRIAL' : 'C21',
+    'PROBE'      : 'C22',
+    'CHOICE'     : 'C23',
+    'BEEP'       : 'C24',
+    'PRESSED'    : 'C25',
 })
 
 CODES_TO_LOG = None # Set None and all codes will be annotated

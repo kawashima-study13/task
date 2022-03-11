@@ -102,11 +102,11 @@ class MRT(Task):
                 core.quit()
             self.log('---- {} was pressed ({:.6f}; {:.6f})'.format(
                 key, self.timer.trial.getTime(), self.timer.task.getTime()),
-                CODES.MRT_PRESSED)
+                CODES.PRESSED)
 
     def _present_beep(self, odd: bool, dursec: float):
         type = 'odd' if odd else 'normal'
-        self.log(f'--- Present {type} stim {dursec} sec.', CODES.MRT_BEEP)
+        self.log(f'--- Present {type} stim {dursec} sec.', CODES.BEEP)
         self.beep[type].play()
 
 

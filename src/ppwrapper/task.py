@@ -51,11 +51,11 @@ class Task:
         self.display.disp_text('Press any key to start.')
         self.button.wait_key(keys=None)
         self.timer.task.reset()
-        self.log('Task started.', CODES.TASK_START)
+        self.log('Task started.', CODES.TASK)
     
     def run_task_tail(self):
         """Called from self.run(), override and use"""
-        self.log('Task finished.', CODES.TASK_FINISH)
+        self.log('Task finished.', CODES.FIN_ALL)
 
     def run_block(self, stims):
         self.stims = stims
@@ -71,7 +71,7 @@ class Task:
         self.timer.block.reset()
         self.log(('- Block started. ',
                   f'({self.progress.block + 1}/{len(self.stimset)})'),
-                 CODES.BLOCK_START)
+                 CODES.BLOCK)
 
     def run_block_tail(self):
         """Called from self._run_block(), override and use"""
@@ -82,7 +82,7 @@ class Task:
         len_trial = len(self.stimset[self.progress.block])
         self.log(('-- Trial started. ',
                   f'({self.progress.trial + 1}/{len_trial})'),
-                 CODES.TRIAL_START)
+                 CODES.TRIAL)
 
 
 if __name__ == '__main__':
