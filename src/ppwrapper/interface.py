@@ -61,6 +61,13 @@ class Button:
         self.kb = keyboard.Keyboard()
         self.itvl_input = itvl_input
 
+    def _glob_key_event(self, key):
+        if key in BUTTONS.ABORT:
+            core.quit()
+        if key in BUTTONS.SKIP:
+            return True
+        return False
+
     def clear(self): # Psychopy's keyboard clear doesn't work
         event.clearEvents()
         for buffer in self.kb._buffers.values():
@@ -77,18 +84,16 @@ class Button:
 
         if keys:
             keys = tuple(keys)
-            keys + (BUTTONS.ABORT,)
+            keys + (BUTTONS.ABORT, BUTTONS.SKIP)
         keys = self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
-        if keys[0] in BUTTONS.ABORT:
-            core.quit()
+        self._glob_key_event(keys[0])
 
     def wait(self, sec: float):
         t0 = clock.Clock()
         while t0.getTime() <= sec:
             core.wait(self.itvl_input)
-            key = self.get_keyname()
-            if key in BUTTONS.ABORT:
-                core.quit()
+            if self._glob_key_event(self.get_keyname()):
+                break
 
     def wait_with_stdtimer(self):
         t0 = clock.Clock()
