@@ -49,7 +49,7 @@ class Probe:
         block_size = np.array((cfg.mrt.light_block_size,) * 2)
         self.light_block = visual.rect.Rect(
             window, size=block_size, fillColor='White',
-            pos=(window.size / [4, -4]) + (block_size / [-2., 2]))
+            pos=(window.size / [2, -2]) + (block_size / [-2., 2]))
 
     def present(self):
         while self.scale.noResponse:
