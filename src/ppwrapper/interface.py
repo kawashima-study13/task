@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Literal
 from sys import stdout
 from typing import Optional
 
@@ -10,10 +11,14 @@ from ..const import BUTTONS
 
 
 class Display:
-    def __init__(self, full: bool=False,
+    def __init__(self, size: tuple[int, int] | Literal['full']=(1000, 1000),
+                 screen_id: int=0,
                  bgcolor: tuple[int, int, int]=(0,) * 3,
                  txtcolor: tuple[int, int, int]=(100,) * 3):
-        self.full = full
+        
+        self.full = size == 'full'
+        self.size = size if isinstance(size, tuple) else (1., 1.)
+        self.screen_id = screen_id
         self.bgcolor = bgcolor
         self.txtcolor = txtcolor
         self.is_built = False
@@ -21,10 +26,10 @@ class Display:
     def build(self):
         self.window = visual.Window(
             color=self.bgcolor,
-            screen=1,
+            screen=self.screen_id,
             colorSpace='rgb255',
             fullscr=self.full,
-            size=(1200, 1200),
+            size=self.size,
             allowGUI=(not self.full),
             winType='pyglet',
             units='pix',
@@ -113,7 +118,12 @@ class Button:
 
 
 if __name__ == '__main__':
-    display = Display()
+    from ..tool.io import load_config
+
+
+    cfg = load_config('config/task.ini')
+    display = Display(cfg.display.size, cfg.display.screen_id,
+                      cfg.color.back, cfg.color.main)
     button = Button()
 
     display.build()
