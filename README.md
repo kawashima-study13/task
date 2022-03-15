@@ -9,7 +9,7 @@
 
 ```
 mkdir mrt
-curl -L https://api.github.com/repos/kawashima-study13/task/tarball/refs/tags/v0.1.0 | tar xzf - -C mrt --strip-components 1
+curl -L https://api.github.com/repos/kawashima-study13/task/tarball/refs/tags/v0.2.0 | tar xzf - -C mrt --strip-components 1
 cd mrt
 conda env create -n s13t -f conda.yaml
 ```
