@@ -1,4 +1,6 @@
 from pathlib import Path
+
+import numpy as np
 from psychopy import visual
 
 from ..tool.io import load_config
@@ -19,8 +21,12 @@ class Probe:
         self.intro = visual.ImageStim(window, image=path, units='norm')
         self.intro.size = self.intro.size / self.intro.size[0] * RATE_INTRO
 
-        color = load_config('config/task.ini').color_name
         pos_y = (window.size[1] / -2.) * POS_RATE_Y_PROBE
+
+        cfg = load_config('config/task.ini')
+        color = cfg.color_name
+        N_TICKS = 5
+        START_TICK = 2
         self.scale = visual.RatingScale(
             win=window,
             low=0, high=N_TICKS - 1,
@@ -39,12 +45,17 @@ class Probe:
             skipKeys=None,
             noMouse=True,
             )
-        ...
+
+        block_size = np.array((cfg.mrt.light_block_size,) * 2)
+        self.light_block = visual.rect.Rect(
+            window, size=block_size, fillColor='White',
+            pos=(window.size / [4, -4]) + (block_size / [-2., 2]))
 
     def present(self):
         while self.scale.noResponse:
             self.intro.draw()
             self.scale.draw()
+            self.light_block.draw()
             self.window.flip()
         rate = self.scale.getRating()
         self.scale.reset()
