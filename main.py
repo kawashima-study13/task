@@ -5,7 +5,8 @@ from src.subjectpath import SubDir
 
 
 cfg = load_config('config/task.ini')
-display = Display(full=False, bgcolor=cfg.color.back, txtcolor=cfg.color.main)
+display = Display(cfg.display.size, cfg.display.screen_id,
+                   cfg.color.back, cfg.color.main)
 button = Button()
 
 stimset = load_csv(cfg.mrt.path_stim)
