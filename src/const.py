@@ -8,6 +8,7 @@ BUTTONS = Dictm({
     'MAIN' : ['r', 'w', 'up'], # Red
     'RIGHT': ['b', 'd', 'right'], # Blue
     'SUB'  : ['y', 's', 'down'], # Yellow
+    'PULSE': ['t']
 })
 
 CODES = Dictm({ # Start timings

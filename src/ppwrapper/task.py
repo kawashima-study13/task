@@ -7,7 +7,7 @@ from psychopy.clock import Clock
 
 from ..tool.io import load_json
 from ..tool.dataclass import Dictm
-from ..const import CODES
+from ..const import CODES, BUTTONS
 
 
 class Task:
@@ -50,8 +50,9 @@ class Task:
         """Called from self.run(), override and use"""
         if not self.display.is_built:
             self.display.build()
-        self.display.disp_text('Press any key to start.')
-        self.button.wait_key(keys=None)
+        self.display.disp_text('そのままお待ちください')
+        self.button.wait_key(keys=BUTTONS.PULSE)
+
         self.timer.task.reset()
         self.log('Task started.', CODES.TASK)
     
