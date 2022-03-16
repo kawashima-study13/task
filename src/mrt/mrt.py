@@ -4,20 +4,41 @@ from typing import Literal
 import pandas as pd
 from psychopy import core
 
-from ..const import BUTTONS, CODES
+from ..tool.serial import Serial
+from ..const import BUTTONS, CODES, CODES_TO_LOG
 from ..probe.probe import Probe
 from ..ppwrapper.task import Task
 from .sound import Beep
 
 
 class MRT(Task):
+    class _Trigger:
+        class DammyWriter:
+            def write(*args, **kwargs):
+                pass
+
+        def __init__(self, cfg: dict, mode: Literal['off', 'serial', 'xid']):
+            if mode == 'off':
+                self.writer = self.DammyWriter()
+            if mode == 'serial':
+                self.writer = Serial(cfg.comname, dursec=cfg.pulse_dursec)
+            if mode == 'xid':
+                from ..tool.xid import XID  # error if driver is not installed
+                self.writer = XID(pulse_dursec=cfg.pulse_dursec)
+
+        def write(self, code):
+            if (CODES_TO_LOG is None) or (code in CODES_TO_LOG):
+                self.writer.write(int(code[1:]))
+
     def __init__(self, display, button,
                  stimset: tuple[tuple], cfg: dict, o_path: str | Path):
         super().__init__(display, button, stimset, cfg, o_path)
         self.data = []
+        self.trigger = self._Trigger(cfg, mode=cfg.trigger_mode)
 
     def log(self, message: str | tuple, code: str, value=None):
         super().log(message, code)
+        self.trigger.write(code)
         self.data.append([
             self.progress.block, self.progress.trial, code,
             self.timer.task.getTime(), self.timer.block.getTime(),
@@ -48,43 +69,41 @@ class MRT(Task):
                                 'saving...complete'))
         self.button.wait_key()
 
-    def _run_baseline(self, sec: float, timing: Literal['pre', 'post']):
-        code = CODES.BASE_PRE if timing == 'pre' else CODES.BASE_POST
-        self.log(f'-- Baseline ({timing}) start', code)
-        self.display.disp_text('+')
-        self.button.wait(sec)
-
     def run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)
         rate = self.probe.present()
         self.log(f'---- Answer: {rate}', CODES.CHOICE, rate)
         self.display.disp_text('+')
+        self.button.clear()
 
     def run_trial(self, stim: str):
+        super().run_trial()
+
+        trialname = 'ODD' if int(stim) > 0 else 'NORMAL'
+        self.log(f'--- It is {trialname} trial.', CODES.ODD_TRIAL)
+
         dursec_trial = sum([self.cfg.itvl_sec_pre,
                             self.cfg.beep_dursec,
                             self.cfg.itvl_sec_post])
-
-        super().run_trial()
         while self.timer.trial.getTime() <= self.cfg.itvl_sec_pre:
             core.wait(self.button.itvl_input)
-            self._get_press()
+            self._get_press(at_release=False)
         self._present_beep(odd=int(stim) > 0, dursec=self.cfg.beep_dursec)
         while self.timer.trial.getTime() <= dursec_trial:
             core.wait(self.button.itvl_input)
-            self._get_press()
+            self._get_press(at_release=False)
 
-    def _get_press(self):
-        if key := self.button.get_keyname():
+    def _get_press(self, at_release: bool=True):
+        if key := self.button.get_keyname(at_release=False):
             if key in BUTTONS.ABORT:
                 core.quit()
             self.log('---- {} was pressed ({:.6f}; {:.6f})'.format(
                 key, self.timer.trial.getTime(), self.timer.task.getTime()),
-                CODES.MRT_PRESSED)
+                CODES.PRESSED)
 
     def _present_beep(self, odd: bool, dursec: float):
         type = 'odd' if odd else 'normal'
-        self.log(f'--- Present {type} stim {dursec} sec.', CODES.MRT_BEEP)
+        self.log(f'--- Present {type} stim {dursec} sec.', CODES.BEEP)
         self.beep[type].play()
 
 

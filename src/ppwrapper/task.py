@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Literal
 from logging import config, getLogger
 from pathlib import Path
 
@@ -6,12 +7,13 @@ from psychopy.clock import Clock
 
 from ..tool.io import load_json
 from ..tool.dataclass import Dictm
-from ..const import CODES
+from ..const import CODES, BUTTONS
 
 
 class Task:
     def __init__(self, display, button,
                  stimset: tuple[tuple], cfg: dict, o_path: str | Path):
+        o_path = Path(o_path)
         while o_path.exists():
             input(f'Save path exists. resolve and press Enter: {o_path}')
 
@@ -48,14 +50,15 @@ class Task:
         """Called from self.run(), override and use"""
         if not self.display.is_built:
             self.display.build()
-        self.display.disp_text('Press any key to start.')
-        self.button.wait_key(keys=None)
+        self.display.disp_text('そのままお待ちください')
+        self.button.wait_key(keys=BUTTONS.PULSE)
+
         self.timer.task.reset()
-        self.log('Task started.', CODES.TASK_START)
+        self.log('Task started.', CODES.TASK)
     
     def run_task_tail(self):
         """Called from self.run(), override and use"""
-        self.log('Task finished.', CODES.TASK_FINISH)
+        self.log('Task finished.', CODES.FIN_ALL)
 
     def run_block(self, stims):
         self.stims = stims
@@ -71,7 +74,7 @@ class Task:
         self.timer.block.reset()
         self.log(('- Block started. ',
                   f'({self.progress.block + 1}/{len(self.stimset)})'),
-                 CODES.BLOCK_START)
+                 CODES.BLOCK)
 
     def run_block_tail(self):
         """Called from self._run_block(), override and use"""
@@ -82,7 +85,13 @@ class Task:
         len_trial = len(self.stimset[self.progress.block])
         self.log(('-- Trial started. ',
                   f'({self.progress.trial + 1}/{len_trial})'),
-                 CODES.TRIAL_START)
+                 CODES.TRIAL)
+
+    def _run_baseline(self, sec: float, timing: Literal['pre', 'post']):
+        code = CODES.BASE_PRE if timing == 'pre' else CODES.BASE_POST
+        self.log(f'-- Baseline ({timing}) start', code)
+        self.display.disp_text('+')
+        self.button.wait(sec)
 
 
 if __name__ == '__main__':

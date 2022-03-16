@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Literal
 from sys import stdout
 from typing import Optional
 
@@ -10,10 +11,14 @@ from ..const import BUTTONS
 
 
 class Display:
-    def __init__(self, full: bool=False,
+    def __init__(self, size: tuple[int, int] | Literal['full']=(1000, 1000),
+                 screen_id: int=0,
                  bgcolor: tuple[int, int, int]=(0,) * 3,
                  txtcolor: tuple[int, int, int]=(100,) * 3):
-        self.full = full
+        
+        self.full = size == 'full'
+        self.size = size if isinstance(size, tuple) else (1., 1.)
+        self.screen_id = screen_id
         self.bgcolor = bgcolor
         self.txtcolor = txtcolor
         self.is_built = False
@@ -21,10 +26,10 @@ class Display:
     def build(self):
         self.window = visual.Window(
             color=self.bgcolor,
-            screen=1,
+            screen=self.screen_id,
             colorSpace='rgb255',
             fullscr=self.full,
-            size=(1200, 1200),
+            size=self.size,
             allowGUI=(not self.full),
             winType='pyglet',
             units='pix',
@@ -61,6 +66,13 @@ class Button:
         self.kb = keyboard.Keyboard()
         self.itvl_input = itvl_input
 
+    def _glob_key_event(self, key):
+        if key in BUTTONS.ABORT:
+            core.quit()
+        if key in BUTTONS.SKIP:
+            return True
+        return False
+
     def clear(self): # Psychopy's keyboard clear doesn't work
         event.clearEvents()
         for buffer in self.kb._buffers.values():
@@ -77,18 +89,16 @@ class Button:
 
         if keys:
             keys = tuple(keys)
-            keys + (BUTTONS.ABORT,)
+            keys + (BUTTONS.ABORT, BUTTONS.SKIP)
         keys = self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
-        if keys[0] in BUTTONS.ABORT:
-            core.quit()
+        self._glob_key_event(keys[0])
 
     def wait(self, sec: float):
         t0 = clock.Clock()
         while t0.getTime() <= sec:
             core.wait(self.itvl_input)
-            key = self.get_keyname()
-            if key in BUTTONS.ABORT:
-                core.quit()
+            if self._glob_key_event(self.get_keyname()):
+                break
 
     def wait_with_stdtimer(self):
         t0 = clock.Clock()
@@ -102,13 +112,18 @@ class Button:
             stdout.write('\r===== {:.1f} sec. ====='.format(t0.getTime()))
             stdout.flush()
 
-    def get_keyname(self):
-        keys = self.kb.getKeys()
+    def get_keyname(self, at_release: bool=False):
+        keys = self.kb.getKeys(waitRelease=at_release)
         return keys[0].name if keys else None
 
 
 if __name__ == '__main__':
-    display = Display()
+    from ..tool.io import load_config
+
+
+    cfg = load_config('config/task.ini')
+    display = Display(cfg.display.size, cfg.display.screen_id,
+                      cfg.color.back, cfg.color.main)
     button = Button()
 
     display.build()
