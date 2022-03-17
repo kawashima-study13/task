@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Literal
+from typing import Literal, Optional
 from logging import config, getLogger
 from pathlib import Path
 
@@ -12,12 +12,14 @@ from ..const import CODES, BUTTONS
 
 class Task:
     def __init__(self, display, button,
-                 stimset: tuple[tuple], cfg: dict, o_path: str | Path):
-        o_path = Path(o_path)
-        while o_path.exists():
-            input(f'Save path exists. resolve and press Enter: {o_path}')
-
-        self.logger = self._set_logger(str(o_path) + '.log')
+                 stimset: tuple[tuple], cfg: dict, o_path: str | Path | None):
+        if o_path:
+            o_path = Path(o_path)
+            while o_path.exists():
+                input(f'Save path exists. resolve and press Enter: {o_path}')
+            self.logger = self._set_logger(str(o_path) + '.log')
+        else:
+            self.logger = self._set_logger()
 
         self.display = display
         self.button = button
@@ -33,9 +35,12 @@ class Task:
             message = ''.join(message)
         self.logger.info(message, extra={'code': code})
 
-    def _set_logger(self, log_path):
+    def _set_logger(self, log_path: Optional[Path]=None):
         logger_config = load_json('config/logger.json')
-        logger_config['handlers']['logfile']['filename'] = log_path
+        if log_path:
+            logger_config['handlers']['logfile']['filename'] = log_path
+        else:
+            logger_config['loggers']['commonlogger']['handlers'] = ['console']
         config.dictConfig(logger_config)
         return getLogger('commonlogger')
 

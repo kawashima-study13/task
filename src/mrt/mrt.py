@@ -31,7 +31,7 @@ class MRT(Task):
                 self.writer.write(int(code[1:]))
 
     def __init__(self, display, button,
-                 stimset: tuple[tuple], cfg: dict, o_path: str | Path):
+                 stimset: tuple[tuple], cfg: dict, o_path: str | Path | None):
         super().__init__(display, button, stimset, cfg, o_path)
         self.data = []
         self.trigger = self._Trigger(cfg, mode=cfg.trigger_mode)
@@ -68,6 +68,7 @@ class MRT(Task):
         self.display.disp_text(('お疲れさまでした。', 'そのままお待ちください。',
                                 'saving...complete'))
         self.button.wait_key()
+        self.display.close()
 
     def run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)
