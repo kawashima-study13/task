@@ -1,7 +1,7 @@
 from src.tool.io import load_config, load_csv
 from src.ppwrapper.interface import Display, Button
 from src.mrt.mrt import MRT
-from src.subjectpath import SubDir
+from src.general.subjectpath import SubDir
 
 
 cfg = load_config('config/task.ini')
