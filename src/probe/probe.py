@@ -5,7 +5,8 @@ from psychopy import visual
 
 from ..tool.io import load_config
 from ..const import BUTTONS
-from src.ppwrapper.interface import Display
+from ..ppwrapper.interface import Display
+from ..general.lightbox import LightBox
 
 
 class Probe:
@@ -22,7 +23,6 @@ class Probe:
         self.intro.size = self.intro.size / self.intro.size[0] * RATE_INTRO
 
         pos_y = (window.size[1] / -2.) * POS_RATE_Y_PROBE
-
         cfg = load_config('config/task.ini')
         color = cfg.color_name
         N_TICKS = 5
@@ -46,16 +46,13 @@ class Probe:
             noMouse=True,
             )
 
-        block_size = np.array((cfg.mrt.light_block_size,) * 2)
-        self.light_block = visual.rect.Rect(
-            window, size=block_size, fillColor='White',
-            pos=(window.size / [2, -2]) + (block_size / [-2., 2]))
+        self.lightbox = LightBox(window)
 
     def present(self):
         while self.scale.noResponse:
             self.intro.draw()
             self.scale.draw()
-            self.light_block.draw()
+            self.lightbox.draw()
             self.window.flip()
         rate = self.scale.getRating()
         self.scale.reset()
