@@ -131,6 +131,11 @@ if __name__ == '__main__':
 
     display.disp_text('STDタイマーで待機テスト (press any key)')
     button.wait_with_stdtimer()
+
+    display.close()
+    input('Test close and build, press enter:')
+    display.build()
+
     for num in [1, 2, 3]:
         display.disp_text(num)
         button.wait(sec=1.)
