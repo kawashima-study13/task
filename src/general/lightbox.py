@@ -4,8 +4,14 @@ from psychopy import visual
 from ..tool.io import load_config
 
 
-class LightBox:
+def LightBox(*args, **kwargs):
+    return _LightBox(*args, **kwargs)
+
+
+class _LightBox:
     def __init__(self, window):
+        self.window = window
+
         cfg = load_config('config/task.ini').display
         coef = cfg.coef_lightbox_pos
         boxsize = np.array((cfg.lightbox_size,) * 2)
@@ -15,3 +21,4 @@ class LightBox:
 
     def draw(self):
         self.box.draw()
+        self.window.flip()

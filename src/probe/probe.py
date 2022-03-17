@@ -52,7 +52,7 @@ class Probe:
         while self.scale.noResponse:
             self.intro.draw()
             self.scale.draw()
-            self.lightbox.draw()
+            self.lightbox.box.draw()
             self.window.flip()
         rate = self.scale.getRating()
         self.scale.reset()

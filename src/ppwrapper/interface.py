@@ -48,6 +48,7 @@ class Display:
         self.is_built = True
 
     def close(self):
+        self.is_built = False
         self.window.close()
 
     def disp_text(self, text: str | list[str] | tuple[str]):
