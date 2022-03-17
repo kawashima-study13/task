@@ -94,13 +94,14 @@ class MRT(Task):
             core.wait(self.button.itvl_input)
             self._get_press(at_release=False)
 
-    def _get_press(self, at_release: bool=True):
-        if key := self.button.get_keyname(at_release=False):
+    def _get_press(self, at_release: bool):
+        if key := self.button.get_keyname(at_release=at_release):
             if key in BUTTONS.ABORT:
                 core.quit()
+            if key in (*BUTTONS.LEFT, *BUTTONS.MAIN, *BUTTONS.SUB):
             self.log('---- {} was pressed ({:.6f}; {:.6f})'.format(
-                key, self.timer.trial.getTime(), self.timer.task.getTime()),
-                CODES.PRESSED)
+                    key, self.timer.trial.getTime(),
+                    self.timer.task.getTime()), CODES.PRESSED)
 
     def _present_beep(self, odd: bool, dursec: float):
         type = 'odd' if odd else 'normal'
