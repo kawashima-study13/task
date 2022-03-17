@@ -4,11 +4,11 @@ from .tool.dataclass import Dictm
 BUTTONS = Dictm({
     'ABORT': ['escape', 'q'],
     'SKIP' : ['c'],
-    'LEFT' : ['g', 'a', 'left'], # Green
-    'MAIN' : ['r', 'w', 'up'], # Red
-    'RIGHT': ['b', 'd', 'right'], # Blue
-    'SUB'  : ['y', 's', 'down'], # Yellow
-    'PULSE': ['t']
+    'LEFT' : ['3', 'g', 'a', 'left'], # Green
+    'MAIN' : ['4', 'r', 'w', 'up'], # Red
+    'RIGHT': ['1', 'b', 'd', 'right'], # Blue
+    'SUB'  : ['2', 'y', 's', 'down'], # Yellow
+    'PULSE': ['5', 't']
 })
 
 CODES = Dictm({ # Start timings
@@ -27,6 +27,7 @@ CODES = Dictm({ # Start timings
     'CHOICE'     : 'C23',
     'BEEP'       : 'C24',
     'PRESSED'    : 'C25',
+    'MWCAUGHT'   : 'C26',
 })
 
 CODES_TO_LOG = [  # Set None and all codes will be annotated
@@ -43,4 +44,5 @@ CODES_TO_LOG = [  # Set None and all codes will be annotated
     CODES.CHOICE,
     CODES.BEEP,
     CODES.PRESSED,
+    CODES.MWCAUGHT,
 ]

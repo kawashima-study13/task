@@ -99,9 +99,13 @@ class MRT(Task):
             if key in BUTTONS.ABORT:
                 core.quit()
             if key in (*BUTTONS.LEFT, *BUTTONS.MAIN, *BUTTONS.SUB):
-            self.log('---- {} was pressed ({:.6f}; {:.6f})'.format(
+                self.log('---- {} was pressed ({:.6f}; {:.6f})'.format(
                     key, self.timer.trial.getTime(),
                     self.timer.task.getTime()), CODES.PRESSED)
+            if key in BUTTONS.RIGHT:
+                self.log('---- MW was caught ({:.6f}; {:.6f})'.format(
+                    self.timer.trial.getTime(), self.timer.task.getTime()),
+                    CODES.MWCAUGHT)
 
     def _present_beep(self, odd: bool, dursec: float):
         type = 'odd' if odd else 'normal'
