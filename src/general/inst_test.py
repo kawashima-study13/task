@@ -1,14 +1,14 @@
-from psychopy import core
-
-from ..const import BUTTONS
+from ..const import BUTTONS, CODES
 from ..general.lightbox import LightBox 
+from ..general.trigger import Trigger
 
 
-def inst_test(display, button):
+def inst_test(display, button, cfg: dict):
     def disp(display, lightbox, message):
         lightbox.box.draw()
         display.disp_text(message)
 
+    trigger = Trigger(cfg, mode=cfg.trigger_mode)
     button.clear()
     display.build()
     lightbox = LightBox(display.window)
@@ -29,6 +29,8 @@ def inst_test(display, button):
             disp(display, lightbox, "MRI Pulse")
         else: 
             disp(display, lightbox, key)
+        if key is not None:
+            trigger.write(CODES.MISC)
     display.close()
 
 

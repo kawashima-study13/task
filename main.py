@@ -25,7 +25,7 @@ start_phase = int(input())
 
 if start_phase <= 1:
     input('Press enter key to start instrument test.')
-    inst_test(display, button)
+    inst_test(display, button, cfg.mrt)
 
 if start_phase <= 2:
     practice_mrt = MRT(display, button,
