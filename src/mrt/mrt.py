@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Literal
 
 import pandas as pd
-from psychopy import core
+from psychopy import core, clock
 
 from ..tool.serial import Serial
 from ..const import BUTTONS, CODES, CODES_TO_LOG
@@ -21,11 +21,11 @@ class MRT(Task):
             if mode == 'off':
                 self.writer = self.DammyWriter()
             try:
-            if mode == 'serial':
-                self.writer = Serial(cfg.comname, dursec=cfg.pulse_dursec)
-            if mode == 'xid':
-                from ..tool.xid import XID  # error if driver is not installed
-                self.writer = XID(pulse_dursec=cfg.pulse_dursec)
+                if mode == 'serial':
+                    self.writer = Serial(cfg.comname, dursec=cfg.pulse_dursec)
+                if mode == 'xid':
+                    from ..tool.xid import XID  # error if driver is not installed
+                    self.writer = XID(pulse_dursec=cfg.pulse_dursec)
             except:
                 input('Connection error, press Enter to continue.')
                 self.writer = self.DammyWriter()
@@ -55,7 +55,8 @@ class MRT(Task):
         self.probe = Probe(self.display.window)
         self.beep = dict(odd=Beep(self.cfg.odd_hz, *params),
                          normal=Beep(self.cfg.normal_hz, *params))
-
+        
+        self._run_test_volume()
         super().run_task_head()
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
 
@@ -111,10 +112,30 @@ class MRT(Task):
                     self.timer.trial.getTime(), self.timer.task.getTime()),
                     CODES.MWCAUGHT)
 
-    def _present_beep(self, odd: bool, dursec: float):
+    def _present_beep(self, odd: bool, dursec: float, log: bool=True):
         type = 'odd' if odd else 'normal'
-        self.log(f'--- Present {type} stim {dursec} sec.', CODES.BEEP)
+        if log:
+            self.log(f'--- Present {type} stim {dursec} sec.', CODES.BEEP)
         self.beep[type].play()
+
+    def _run_test_volume(self):
+        RATE: int = 4
+        self.display.disp_text(('音量チェック中',
+                                f'Press {BUTTONS.MAIN} to start'))
+        i = 0
+        t0 = clock.Clock()
+        itvl = self.cfg.itvl_sec_pre + self.cfg.itvl_sec_post
+        to_continue = True
+        while to_continue:
+            t0.reset()
+            i += 1
+            is_odd = not (i % RATE)
+            self._present_beep(is_odd, self.cfg.beep_dursec, log=False)
+            while t0.getTime() < itvl:
+                key = self.button.get_keyname()
+                if key in BUTTONS.MAIN:
+                    to_continue = False
+                    break
 
 
 if __name__ == '__main__':
