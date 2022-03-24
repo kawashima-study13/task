@@ -3,6 +3,7 @@ from src.ppwrapper.interface import Display, Button
 from src.mrt.mrt import MRT
 from src.general.subjectpath import SubDir
 from src.general.inst_test import inst_test
+from src.general.fixation import fixation
 
 
 cfg = load_config('config/task.ini')
@@ -20,6 +21,7 @@ print('\n'.join((
     '1. Instrument test',
     '2. Practice MRT',
     '3. Run MRT',
+    '4. Fixation',
     )))
 start_phase = int(input())
 
@@ -39,3 +41,6 @@ if start_phase <= 3:
               stimset, cfg.mrt, o_path=sub_dir.get_dir() / 'mrt.csv')
     input('Press enter key to start MRT.')
     mrt.run()
+
+if start_phase <= 4:
+    mrt = fixation(display, button)
