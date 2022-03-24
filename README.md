@@ -4,12 +4,13 @@
 
 # Install
 
-`conda` を使える状態で、お好きなディレクトリにて下記コマンドを実行してください。  
+`conda` を使える状態で、お好きなディレクトリにて下記のようなコマンドを実行してください。  
+`{VERSIONAME}` には `v0.4.0` といったバージョン名が入ります。  jj
 コードがダウンロードされるとともに、実行環境がcondaで作られます。
 
 ```
 mkdir mrt
-curl -L https://api.github.com/repos/kawashima-study13/task/tarball/refs/tags/v0.3.0 | tar xzf - -C mrt --strip-components 1
+curl -L https://api.github.com/repos/kawashima-study13/task/tarball/refs/tags/{VERSIONNAME} | tar xzf - -C mrt --strip-components 1
 cd mrt
 conda env create -n s13t -f conda.yaml
 ```
