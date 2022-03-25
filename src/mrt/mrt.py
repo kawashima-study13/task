@@ -26,6 +26,8 @@ class MRT(Task):
             self.timer.trial.getTime(), value])
 
     def run_task_head(self):
+        if self.button.abort: return
+
         params = self.cfg.beep_dursec, self.cfg.use_ppsound
         if not self.display.is_built:
             self.display.build() # For Probe()
@@ -36,12 +38,15 @@ class MRT(Task):
                                 '(Press ENTER to test vol)'))
         self.button.wait_keys(keys=['return'])
         self._run_test_volume()
+        if self.button.abort: return
         super().run_task_head()
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
         self.display.disp_text('o')
 
     def run_task_tail(self):
+        if self.button.abort: return
         self._run_baseline(self.cfg.sec_baseline_post, 'post')
+        if self.button.abort: return
         super().run_task_tail()
 
         self.display.disp_text(('お疲れさまでした。', 'そのままお待ちください。',
@@ -55,7 +60,6 @@ class MRT(Task):
                                 '(saving...complete.',
                                 'press ENTER to finish.)'))
         self.button.wait_keys(keys=['return'])
-        self.display.close()
 
     def run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)
@@ -83,8 +87,7 @@ class MRT(Task):
 
     def _get_press(self, at_release: bool):
         if key := self.button.get_keyname(at_release=at_release):
-            if key in BUTTONS.ABORT:
-                core.quit()
+            self.button.glob_key_event(key)
             if key in (*BUTTONS.LEFT, *BUTTONS.MAIN, *BUTTONS.SUB):
                 self.log('---- {} was pressed ({:.6f}; {:.6f})'.format(
                     key, self.timer.trial.getTime(),

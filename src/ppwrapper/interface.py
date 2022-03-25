@@ -66,10 +66,12 @@ class Button:
     def __init__(self, itvl_input=.05):
         self.kb = keyboard.Keyboard()
         self.itvl_input = itvl_input
+        self.abort = False
 
-    def _glob_key_event(self, key):
+    def glob_key_event(self, key):
         if key in BUTTONS.ABORT:
-            core.quit()
+            self.abort = True
+            return True
         if key in BUTTONS.SKIP:
             return True
         return False
@@ -93,13 +95,13 @@ class Button:
             keys = tuple(keys)
             keys + (BUTTONS.ABORT, BUTTONS.SKIP)
         keys = self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
-        self._glob_key_event(keys[0])
+        self.glob_key_event(keys[0])
 
     def wait(self, sec: float):
         t0 = clock.Clock()
         while t0.getTime() <= sec:
             core.wait(self.itvl_input)
-            if self._glob_key_event(self.get_keyname()):
+            if self.glob_key_event(self.get_keyname()):
                 break
 
     def wait_with_stdtimer(self):
