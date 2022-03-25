@@ -85,9 +85,10 @@ class Button:
     def reset_clock(self):
         self.kb.clock.reset()
 
-    def wait_key(
+    def wait_keys(
         self, keys: Optional[list | tuple]=None, maxsec: float=float('inf')):
 
+        self.clear()
         if keys:
             keys = tuple(keys)
             keys + (BUTTONS.ABORT, BUTTONS.SKIP)

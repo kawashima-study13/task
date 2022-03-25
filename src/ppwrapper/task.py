@@ -56,7 +56,7 @@ class Task:
         if not self.display.is_built:
             self.display.build()
         self.display.disp_text('そのままお待ちください')
-        self.button.wait_key(keys=BUTTONS.PULSE)
+        self.button.wait_keys(keys=BUTTONS.PULSE)
 
         self.timer.task.reset()
         self.log('Task started.', CODES.TASK)

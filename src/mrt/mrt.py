@@ -32,7 +32,9 @@ class MRT(Task):
         self.probe = Probe(self.display.window)
         self.beep = dict(odd=Beep(self.cfg.odd_hz, *params),
                          normal=Beep(self.cfg.normal_hz, *params))
-        
+        self.display.disp_text(('そのままお待ちください。',
+                                '(Press ENTER to test vol)'))
+        self.button.wait_keys(keys=['return'])
         self._run_test_volume()
         super().run_task_head()
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
@@ -42,14 +44,16 @@ class MRT(Task):
         super().run_task_tail()
 
         self.display.disp_text(('お疲れさまでした。', 'そのままお待ちください。',
-                                'saving...'))
+                                '(saving...)'))
         data = pd.DataFrame(self.data)
         data.columns = ['block', 'trial', 'code',
                         'sec_task', 'sec_block', 'sec_trial', 'value']
-        data.to_csv(self.o_path, index=False)
+        if self.o_path is not None:
+            data.to_csv(self.o_path, index=False)
         self.display.disp_text(('お疲れさまでした。', 'そのままお待ちください。',
-                                'saving...complete'))
-        self.button.wait_key()
+                                '(saving...complete.',
+                                'press ENTER to finish.)'))
+        self.button.wait_keys(keys=['return'])
         self.display.close()
 
     def run_block_tail(self):
@@ -97,22 +101,28 @@ class MRT(Task):
 
     def _run_test_volume(self):
         RATE: int = 4
-        self.display.disp_text(('音量チェック中',
-                                f'Press {BUTTONS.MAIN} to start'))
+        self.display.disp_text(('２種類の音が聞こえたら',
+                                '上ボタンで開始',
+                                '聞こえなかったら',
+                                '下ボタン'))
+        self.button.clear()
         i = 0
         t0 = clock.Clock()
         itvl = self.cfg.itvl_sec_pre + self.cfg.itvl_sec_post
-        to_continue = True
-        while to_continue:
+        while True:
             t0.reset()
             i += 1
             is_odd = not (i % RATE)
             self._present_beep(is_odd, self.cfg.beep_dursec, log=False)
             while t0.getTime() < itvl:
                 key = self.button.get_keyname()
-                if key in BUTTONS.MAIN:
-                    to_continue = False
-                    break
+                if key in BUTTONS.SUB:
+                    self.display.disp_text(('そのままお待ちください。',
+                                            '(Volume is too low!',
+                                            'press QUIT key)'))
+                    self.button.wait(float('inf'))
+                if key is not None:
+                    return
 
 
 if __name__ == '__main__':
