@@ -66,7 +66,6 @@ class Task:
 
         self.timer.task.reset()
         self.log('Task started.', CODES.TASK)
-        self.pbar.start()
     
     def run_task_tail(self):
         """Called from self.run(), override and use"""

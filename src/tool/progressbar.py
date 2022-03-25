@@ -20,6 +20,8 @@ class Server:
                     self.client.send('ok'.encode('utf-8'))
                 except (ConnectionResetError, ConnectionAbortedError):
                     print('Connection closed.\n')
+                    if hasattr(self, 'bar'):
+                        self.bar.close()
                     break
     
     def _wait_to_connect(self, host, port):
