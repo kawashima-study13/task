@@ -122,7 +122,7 @@ class MRT(Task):
                                             '(Volume is too low!',
                                             'press QUIT key)'))
                     self.button.wait(float('inf'))
-                if key is not None:
+                if key in BUTTONS.MAIN:
                     return
 
 
