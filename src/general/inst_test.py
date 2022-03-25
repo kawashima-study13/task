@@ -31,7 +31,6 @@ def inst_test(display, button, cfg: dict):
             disp(display, lightbox, key)
         if key is not None:
             trigger.write(CODES.MISC)
-    display.close()
 
 
 if __name__ == '__main__':

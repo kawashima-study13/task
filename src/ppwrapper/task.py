@@ -47,15 +47,18 @@ class Task:
     def run(self):
         self.run_task_head()
         for i, stims in enumerate(self.stimset):
+            if self.button.abort: return
             self.progress.block = i
             self.run_block(stims)
         self.run_task_tail()
 
     def run_task_head(self):
         """Called from self.run(), override and use"""
+        if self.button.abort: return
         if not self.display.is_built:
             self.display.build()
-        self.display.disp_text('そのままお待ちください')
+        self.display.disp_text(('そのままお待ちください。',
+                                '(Waiting pulse)'))
         self.button.wait_keys(keys=BUTTONS.PULSE)
 
         self.timer.task.reset()
@@ -63,6 +66,7 @@ class Task:
     
     def run_task_tail(self):
         """Called from self.run(), override and use"""
+        if self.button.abort: return
         self.log('Task finished.', CODES.FIN_ALL)
 
     def run_block(self, stims):
@@ -70,12 +74,14 @@ class Task:
 
         self.run_block_head()
         for i, stim in enumerate(stims):
+            if self.button.abort: return
             self.progress.trial = i
             self.run_trial(stim)
         self.run_block_tail()
 
     def run_block_head(self):
         """Called from self._run_block(), override and use"""
+        if self.button.abort: return
         self.timer.block.reset()
         self.log(('- Block started. ',
                   f'({self.progress.block + 1}/{len(self.stimset)})'),

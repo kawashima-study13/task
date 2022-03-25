@@ -16,31 +16,31 @@ stimset_practice = load_csv(cfg.mrt_practice.path_stim)
 
 sub_dir = SubDir().ask_id('Enter sub. ID (s3001~): ').make_dir()
 
-print('\n'.join((
-    '',
-    'Input phase num and enter:',
-    '1. Instrument test',
-    '2. Practice MRT',
-    '3. Run MRT',
-    '4. Fixation',
-    )))
-start_phase = int(input())
+while True:
+    phase = input('\n'.join((
+        '',
+        'i. Instrument test',
+        'f. Fixation',
+        '1. Practice MRT',
+        '2. Run MRT',
+        'Input phase num and enter: ',
+        )))
 
-if start_phase <= 1:
-    input('Press enter key to start instrument test.')
-    inst_test(display, button, cfg.mrt)
+    if phase == 'i':
+        inst_test(display, button, cfg.mrt)
 
-if start_phase <= 2:
-    practice_mrt = MRT(display, button,
-                       stimset_practice, cfg.mrt_practice, o_path=None)
-    input('Press enter key to start practice of MRT.')
-    practice_mrt.run()
+    if phase == 'f':
+        mrt = fixation(display, button)
 
-if start_phase <= 3:
-    o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
-    mrt = MRT(display, button, stimset, cfg.mrt, o_path=o_path)
-    input('Press enter key to start MRT.')
-    mrt.run()
+    if phase == '1':
+        practice_mrt = MRT(display, button,
+                        stimset_practice, cfg.mrt_practice, o_path=None)
+        practice_mrt.run()
 
-if start_phase <= 4:
-    mrt = fixation(display, button)
+    if phase == '2':
+        o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
+        mrt = MRT(display, button, stimset, cfg.mrt, o_path=o_path)
+        mrt.run()
+    
+    button.abort = False
+    display.close()
