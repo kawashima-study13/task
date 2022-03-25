@@ -15,6 +15,7 @@ stimset = load_csv(cfg.mrt.path_stim)
 stimset_practice = load_csv(cfg.mrt_practice.path_stim)
 
 sub_dir = SubDir().ask_id('Enter sub. ID (s3001~): ').make_dir()
+
 print('\n'.join((
     '',
     'Input phase num and enter:',
@@ -36,9 +37,8 @@ if start_phase <= 2:
     practice_mrt.run()
 
 if start_phase <= 3:
-    o_path = sub_dir.get_dir() / 'mrt.csv'
-    mrt = MRT(display, button,
-              stimset, cfg.mrt, o_path=sub_dir.get_dir() / 'mrt.csv')
+    o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
+    mrt = MRT(display, button, stimset, cfg.mrt, o_path=o_path)
     input('Press enter key to start MRT.')
     mrt.run()
 
