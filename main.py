@@ -41,6 +41,7 @@ while True:
         o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
         mrt = MRT(display, button, stimset, cfg.mrt, o_path=o_path)
         mrt.run()
+        mrt.pbar.close()
     
     button.abort = False
     display.close()

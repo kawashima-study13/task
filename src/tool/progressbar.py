@@ -10,6 +10,19 @@ class Server:
         self.total: int = 1
         self.i: int = 0
 
+        while True:
+            self._wait_to_connect(host, port)
+            while True:
+                try:
+                    code = self.client.recv(LARGENUM)
+                    code = code.decode('utf-8')
+                    self.proc_code(code)
+                    self.client.send('ok'.encode('utf-8'))
+                except ConnectionResetError:
+                    print('Connection closed.\n')
+                    break
+    
+    def _wait_to_connect(self, host, port):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(None)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -19,12 +32,6 @@ class Server:
         self.client, _ = s.accept()
         self.client.settimeout(None)
         print('... connected!')
-
-        while True:
-            code = self.client.recv(LARGENUM)
-            code = code.decode('utf-8')
-            self.proc_code(code)
-            self.client.send('ok'.encode('utf-8'))
     
     def proc_code(self, code: str):
         code = code.split(':')
@@ -70,6 +77,9 @@ class ProgressBar:
     def update(self, i):
         self._send(f'update:{i}')
 
+    def close(self):
+        self.server.close()
+
 
 if __name__ == '__main__':
     from time import sleep
@@ -79,15 +89,19 @@ if __name__ == '__main__':
         s.send(code.encode('utf-8'))
         s.recv(1024)
 
-    TOTAL = 10
+    def task():
+        TOTAL = 5
+        pbar = ProgressBar(0, TOTAL)
+        pbar.start()
+        for i in range(TOTAL):
+            sleep(1.)
+            pbar.update(1)
+        pbar.close()
 
     thread = Thread(target=lambda: Server())
     thread.start()
 
     sleep(1.)
-
-    pbar = ProgressBar(0, TOTAL)
-    pbar.start()
-    for i in range(TOTAL):
-        sleep(1.)
-        pbar.update(1)
+    task()
+    sleep(1.)
+    task()
