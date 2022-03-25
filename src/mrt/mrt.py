@@ -38,6 +38,7 @@ class MRT(Task):
         self._run_test_volume()
         super().run_task_head()
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
+        self.display.disp_text('o')
 
     def run_task_tail(self):
         self._run_baseline(self.cfg.sec_baseline_post, 'post')
@@ -60,7 +61,7 @@ class MRT(Task):
         self.log('--- Probe presented', CODES.PROBE)
         rate = self.probe.present()
         self.log(f'---- Answer: {rate}', CODES.CHOICE, rate)
-        self.display.disp_text('+')
+        self.display.disp_text('o')
         self.button.clear()
 
     def run_trial(self, stim: str):
