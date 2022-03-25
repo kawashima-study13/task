@@ -7,6 +7,7 @@ from psychopy.clock import Clock
 
 from ..tool.io import load_json
 from ..tool.dataclass import Dictm
+from ..tool.progressbar import ProgressBar
 from ..const import CODES, BUTTONS
 
 
@@ -29,6 +30,8 @@ class Task:
 
         self.timer = Dictm(task=Clock(), block=Clock(), trial=Clock())
         self.progress: dict[int, int] = Dictm(block=0, trial=0)
+        total = sum([len(stims) for stims in stimset])
+        self.pbar = ProgressBar(initial=0, total=total, use=cfg.use_pbar)
 
     def log(self, message: str | tuple, code: str):
         if isinstance(message, tuple):
@@ -60,6 +63,7 @@ class Task:
 
         self.timer.task.reset()
         self.log('Task started.', CODES.TASK)
+        self.pbar.start()
     
     def run_task_tail(self):
         """Called from self.run(), override and use"""
@@ -88,6 +92,7 @@ class Task:
         """Called from self._run_block(), override and use"""
         self.timer.trial.reset()
         len_trial = len(self.stimset[self.progress.block])
+        self.pbar.update(1)
         self.log(('-- Trial started. ',
                   f'({self.progress.trial + 1}/{len_trial})'),
                  CODES.TRIAL)

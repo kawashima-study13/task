@@ -24,10 +24,7 @@ class Server:
             code = self.client.recv(LARGENUM)
             code = code.decode('utf-8')
             self.proc_code(code)
-            self.send('ok')
-
-    def send(self, message):
-        self.client.send(message.encode('utf-8'))
+            self.client.send('ok'.encode('utf-8'))
     
     def proc_code(self, code: str):
         code = code.split(':')
@@ -46,19 +43,19 @@ class Server:
 
 class ProgressBar:
     def __init__(self, initial: int, total: int,
-                 host: str='127.0.0.1', port: int=50000, off: bool=False):
-        if off:
+                 host: str='127.0.0.1', port: int=50000, use: bool=True):
+        if not use:
             self.off = True
             return
         self.off = False
         while True:
             try:
                 self.server = socket.create_connection((host, port), timeout=2)
+                break
             except:
-                input('Connection failed, press ENTER to continue')
-                self.off = True
-                return
-            break
+                if input('Pbar connection failed, n to retry: ') != 'n':
+                    self.off = True
+                    return
         self._send(f'initial:{initial}')
         self._send(f'total:{total}')
 

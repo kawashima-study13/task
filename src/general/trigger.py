@@ -19,7 +19,7 @@ class Trigger:
                 from ..tool.xid import XID  # error if driver is not installed
                 self.writer = XID(pulse_dursec=cfg.pulse_dursec)
         except:
-            input('Connection error, press Enter to continue.')
+            input('Trigger connection failed, press ENTER to continue')
             self.writer = self.DammyWriter()
 
     def write(self, code):
