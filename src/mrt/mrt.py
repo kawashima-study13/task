@@ -41,6 +41,7 @@ class MRT(Task):
         if self.button.abort: return
         super().run_task_head()
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
+        self.pbar.start()
         self.display.disp_text('o')
 
     def run_task_tail(self):
