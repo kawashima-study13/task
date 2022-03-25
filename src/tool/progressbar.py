@@ -18,7 +18,7 @@ class Server:
                     code = code.decode('utf-8')
                     self.proc_code(code)
                     self.client.send('ok'.encode('utf-8'))
-                except ConnectionResetError:
+                except (ConnectionResetError, ConnectionAbortedError):
                     print('Connection closed.\n')
                     break
     
