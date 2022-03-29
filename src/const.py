@@ -19,7 +19,7 @@ CODES = Dictm({ # Start timings
     'TRIAL'      : 'C13',
     'BASE_PRE'   : 'C14',
     'BASE_POST'  : 'C15',
-    'MISC'       : 'C01',
+    'MISC'       : 'C10',
 
     # MRT
     'ODD_TRIAL'  : 'C20',
