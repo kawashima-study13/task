@@ -72,8 +72,13 @@ class MRT(Task):
     def run_trial(self, stim: str):
         super().run_trial()
 
-        trialname = 'ODD' if int(stim) > 0 else 'NORMAL'
-        self.log(f'--- It is {trialname} trial.', CODES.ODD_TRIAL)
+        if int(stim) > 0:
+            trialname = 'ODD'
+            code = CODES.ODD_TRIAL
+        else:
+            trialname = 'NORMAL'
+            code = CODES.NORM_TRIAL
+        self.log(f'--- It is {trialname} trial.', code)
 
         dursec_trial = sum([self.cfg.itvl_sec_pre,
                             self.cfg.beep_dursec,
