@@ -1,65 +1,57 @@
 from typing import List
-import doctest
+import random
 import csv
 
-import numpy as np
-
 from src.tool.io import load_config
+from src.tool.dataclass import Dictm
 
 
-np.random.seed(2022)
+random.seed(2022)
 cfg = load_config('config/stim_generation.ini').mrt
-PROBE_CODE: int = 10
 O_PATH = 'src/mrt/stim/stim.csv'
+CODE_ODD = 1
+CODE_NML = 0
 
 
-def validate_ids_itvl(ids: np.ndarray, n_trial: int, min_interval: float
-    ) -> bool:
-    """
-    >>> ids = np.array([8, 4, 2, 1, 2])
-    >>> n_trial = 10
-    >>> validate_ids_itvl(ids, n_trial, min_interval=6)
-    True
-    >>> validate_ids_itvl(ids, n_trial, min_interval=7)
-    False
-    """
-
-    n_aft_probe = n_trial - ids
-    itvls = ids + np.insert(n_aft_probe[:-1], 0, 0)
-    return (itvls >= min_interval).all()  # type: ignore
+def make_random_order_odd_normal(cfg: Dictm) -> List[int]:
+    stims_odd = [CODE_ODD] * int(cfg.total_trial * cfg.rate_odd)
+    stims_nml = [CODE_NML] * int(cfg.total_trial * (1 - cfg.rate_odd))
+    stims = stims_odd + stims_nml
+    assert len(stims) == cfg.total_trial
+    random.shuffle(stims)
+    return stims
 
 
-def probe_block_end(stimset: np.ndarray) -> List:
-    """
-    >>> foo = np.array([[0 , 11, 0 , 1 , 0], [1 , 0 , 0 , 10, 1], [0 , 10, 0 , 0 , 1]])
-    >>> probe_block_end(foo)
-    [[0, 11], [0, 1, 0, 1, 0, 0, 10], [1, 0, 10], [0, 0, 1]]
-    """
-    stims = []
-    stimset_ = []
-    for stim in stimset.flatten():
-        stims.append(stim)
-        if stim >= PROBE_CODE:
-            stimset_.append(stims)
-            stims = []
-    stimset_.append(stims)
-    return stimset_
+def divide_stims_into_blocks(stims: List[int], cfg: Dictm) -> List[List[int]]:
+    while True:
+        ns_trial_inblocks = random.sample(
+            range(cfg.min_interval, cfg.max_interval + 1), cfg.n_block - 1)
+        len_lastblock = cfg.total_trial - sum(ns_trial_inblocks)
+        if cfg.min_interval <= len_lastblock <= cfg.max_interval:
+            break
+    
+    stimset: List[List[int]] = []
+    for n_trial_inblock in ns_trial_inblocks:
+        stimset.append(stims[:n_trial_inblock])
+        stims = stims[n_trial_inblock:]
+    stimset.append(stims)  # <- last block
+    return stimset
 
-doctest.testmod()
 
-stimset = (np.random.rand(cfg.n_block, cfg.n_trial) <= cfg.rate_odd)
-stimset = stimset.astype(int)
+def validate_stims(stimset: List[List[int]], cfg: Dictm) -> bool:
+    """test code"""
+    assert len(stimset) == cfg.n_block
+    assert sum([len(stims) for stims in stimset]) == cfg.total_trial
+    n_odd_shouldbe= cfg.total_trial * cfg.rate_odd
+    assert sum([sum(stims) for stims in stimset]) == n_odd_shouldbe
+    for stims in stimset:
+        assert cfg.min_interval <= len(stims) <= cfg.max_interval
+    return True
 
-while True:
-    ids_probe = np.random.randint(0, cfg.n_trial - 1, cfg.n_block)
-    if validate_ids_itvl(ids_probe, cfg.n_trial, cfg.min_interval):
-        break
 
-assert len(stimset) == len(ids_probe) # use strict arg in python 3.10's zip()
-for stims, idx_probe in zip(stimset, ids_probe):
-    stims[idx_probe] += PROBE_CODE
-
-stimset = probe_block_end(stimset)
+stims = make_random_order_odd_normal(cfg)
+stimset = divide_stims_into_blocks(stims, cfg)
+validate_stims(stimset, cfg)
 
 with open(O_PATH, 'w') as f:
     writer = csv.writer(f)
