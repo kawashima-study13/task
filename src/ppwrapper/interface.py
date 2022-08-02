@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Literal
+from typing import Literal, Sequence
 from sys import stdout
 from typing import Optional
 
@@ -63,12 +63,12 @@ class Display:
 
 
 class Button:
-    def __init__(self, itvl_input=.05):
+    def __init__(self, itvl_input: float=.05):
         self.kb = keyboard.Keyboard()
         self.itvl_input = itvl_input
         self.abort = False
 
-    def glob_key_event(self, key):
+    def glob_key_event(self, key: str):
         if key in BUTTONS.ABORT:
             self.abort = True
             return True
@@ -88,14 +88,15 @@ class Button:
         self.kb.clock.reset()
 
     def wait_keys(
-        self, keys: Optional[list | tuple]=None, maxsec: float=float('inf')):
+        self, keys: Optional[Sequence]=None, maxsec: float=float('inf')):
 
         self.clear()
         if keys:
             keys = tuple(keys)
             keys + (BUTTONS.ABORT, BUTTONS.SKIP)
-        keys = self.kb.waitKeys(maxWait=maxsec, keyList=keys, waitRelease=True)
-        self.glob_key_event(keys[0])
+        pressed_keys = self.kb.waitKeys(
+            maxWait=maxsec, keyList=keys, waitRelease=True)
+        self.glob_key_event(pressed_keys[0])
 
     def wait(self, sec: float):
         t0 = clock.Clock()
@@ -140,7 +141,7 @@ if __name__ == '__main__':
     display.build()
 
     for num in [1, 2, 3]:
-        display.disp_text(num)
+        display.disp_text(str(num))
         button.wait(sec=1.)
 
     display.disp_text('Test keys, and press abort key to quit')

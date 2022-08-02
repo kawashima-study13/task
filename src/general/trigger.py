@@ -1,5 +1,6 @@
 from typing import Literal
 
+from ..tool.dataclass import Dictm
 from ..tool.serial import Serial
 from ..const import CODES_TO_LOG
 
@@ -9,7 +10,7 @@ class Trigger:
         def write(*args, **kwargs):
             pass
 
-    def __init__(self, cfg: dict, mode: Literal['off', 'serial', 'xid']):
+    def __init__(self, cfg: Dictm, mode: Literal['off', 'serial', 'xid']):
         if mode == 'off':
             self.writer = self.DammyWriter()
         try:

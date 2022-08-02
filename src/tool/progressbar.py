@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import Any
 import socket
 
 from tqdm import tqdm
@@ -24,7 +26,7 @@ class Server:
                         self.bar.close()
                     break
     
-    def _wait_to_connect(self, host, port):
+    def _wait_to_connect(self, host: str, port: int):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(None)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -36,15 +38,15 @@ class Server:
         print('... connected!')
     
     def proc_code(self, code: str):
-        code = code.split(':')
-        if code[0] == 'total':
-            self.total = int(code[1])
-        if code[0] == 'initial':
-            self.initial = int(code[1])
-        if code[0] == 'start':
+        codes = code.split(':')
+        if codes[0] == 'total':
+            self.total = int(codes[1])
+        if codes[0] == 'initial':
+            self.initial = int(codes[1])
+        if codes[0] == 'start':
             self.start()
-        if code[0] == 'update':
-            self.bar.update(int(code[1]))
+        if codes[0] == 'update':
+            self.bar.update(int(codes[1]))
 
     def start(self):
         self.bar = tqdm(initial=self.initial, total=self.total)
@@ -68,7 +70,7 @@ class ProgressBar:
         self._send(f'initial:{initial}')
         self._send(f'total:{total}')
 
-    def _send(self, code):
+    def _send(self, code: str):
         if self.off: return
         self.server.send(code.encode('utf-8'))
         self.server.recv(LARGENUM)
@@ -76,7 +78,7 @@ class ProgressBar:
     def start(self):
         self._send('start')
 
-    def update(self, i):
+    def update(self, i: int | str):
         self._send(f'update:{i}')
 
     def close(self):
@@ -95,7 +97,7 @@ if __name__ == '__main__':
         TOTAL = 5
         pbar = ProgressBar(0, TOTAL)
         pbar.start()
-        for i in range(TOTAL):
+        for _ in range(TOTAL):
             sleep(1.)
             pbar.update(1)
         pbar.close()

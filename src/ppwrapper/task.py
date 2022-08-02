@@ -1,24 +1,26 @@
 from __future__ import annotations
-from typing import Literal, Optional
+from typing import Literal, Optional, Sequence
 from logging import config, getLogger
 from pathlib import Path
 
 from psychopy.clock import Clock
 
 from ..tool.io import load_json
-from ..tool.dataclass import Dictm
+from ..tool.dataclass import Pathlike, Dictm
 from ..tool.progressbar import ProgressBar
 from ..const import CODES, BUTTONS
+from ..ppwrapper.interface import Display, Button
 
 
 class Task:
-    def __init__(self, display, button,
-                 stimset: tuple[tuple], cfg: dict, o_path: str | Path | None):
+    def __init__(self, display: Display, button: Button,
+                 stimset: tuple[tuple, ...], cfg: Dictm,
+                 o_path: Pathlike | None):
         if o_path:
             o_path = Path(o_path)
             while o_path.exists():
                 input(f'Save path exists. resolve and press Enter: {o_path}')
-            self.logger = self._set_logger(str(o_path) + '.log')
+            self.logger = self._set_logger(str(o_path) + '.log')  # type: ignore
         else:
             self.logger = self._set_logger()
 
@@ -29,7 +31,7 @@ class Task:
         self.o_path = o_path
 
         self.timer = Dictm(task=Clock(), block=Clock(), trial=Clock())
-        self.progress: dict[int, int] = Dictm(block=0, trial=0)
+        self.progress: Dictm[int, int] = Dictm(block=0, trial=0)
         total = sum([len(stims) for stims in stimset])
         self.pbar = ProgressBar(initial=0, total=total, use=cfg.use_pbar)
 
@@ -72,7 +74,7 @@ class Task:
         if self.button.abort: return
         self.log('Task finished.', CODES.FIN_ALL)
 
-    def run_block(self, stims):
+    def run_block(self, stims: Sequence):
         self.stims = stims
 
         self.run_block_head()
@@ -95,6 +97,7 @@ class Task:
 
     def run_trial(self, stim=None):
         """Called from self._run_block(), override and use"""
+        stim  # <- suppress "unused" hint
         self.timer.trial.reset()
         len_trial = len(self.stimset[self.progress.block])
         self.pbar.update(1)
@@ -114,5 +117,5 @@ if __name__ == '__main__':
 
     display = Display()
     button = Button()
-    task = Task(Display(), Button(), ((0,1), (2,3)), dict(), 'test.csv')
+    task = Task(Display(), Button(), ((0,1), (2,3)), Dictm(), 'test.csv')
     task.run()

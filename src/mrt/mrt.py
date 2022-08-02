@@ -1,23 +1,26 @@
 from __future__ import annotations
+from typing import Any, List
 
 import pandas as pd
 from psychopy import core, clock
 
+from ..tool.dataclass import Dictm
 from ..const import BUTTONS, CODES
 from ..general.trigger import Trigger
 from ..probe.probe import Probe
+from ..ppwrapper.interface import Display, Button
 from ..ppwrapper.task import Task
 from .sound import Beep
 
 
 class MRT(Task):
-    def __init__(self, display, button,
-                 stimset: tuple[tuple], cfg: dict, o_path: str | Path | None):
+    def __init__(self, display: Display, button: Button,
+                 stimset: tuple[tuple], cfg: Dictm, o_path: str | Path | None):
         super().__init__(display, button, stimset, cfg, o_path)
-        self.data = []
+        self.data: List[Any] = []
         self.trigger = Trigger(cfg, mode=cfg.trigger_mode)
 
-    def log(self, message: str | tuple, code: str, value=None):
+    def log(self, message: str | tuple, code: str, value: Any=None):
         super().log(message, code)
         self.trigger.write(code)
         self.data.append([

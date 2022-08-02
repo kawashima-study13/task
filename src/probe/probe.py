@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import numpy as np
 from psychopy import visual
 
 from ..tool.io import load_config
@@ -10,7 +9,7 @@ from ..general.lightbox import LightBox
 
 
 class Probe:
-    def __init__(self, window):
+    def __init__(self, window: visual.Window):
         RATE_INTRO = 1.
         POS_RATE_Y_PROBE = .6 # 1.0 bottom
         N_TICKS = 5

@@ -1,18 +1,20 @@
+from typing import List
 import doctest
 import csv
 
 import numpy as np
 
-from ...tool.io import load_config
-
+from src.tool.io import load_config
 
 
 np.random.seed(2022)
-cfg = load_config('config/stim.ini').mrt
+cfg = load_config('config/stim_generation.ini').mrt
 PROBE_CODE: int = 10
 O_PATH = 'src/mrt/stim/stim.csv'
 
-def validate_ids_itvl(ids, n_trial, min_interval) -> bool:
+
+def validate_ids_itvl(ids: np.ndarray, n_trial: int, min_interval: float
+    ) -> bool:
     """
     >>> ids = np.array([8, 4, 2, 1, 2])
     >>> n_trial = 10
@@ -24,17 +26,15 @@ def validate_ids_itvl(ids, n_trial, min_interval) -> bool:
 
     n_aft_probe = n_trial - ids
     itvls = ids + np.insert(n_aft_probe[:-1], 0, 0)
-    return (itvls >= min_interval).all()
+    return (itvls >= min_interval).all()  # type: ignore
 
-def probe_block_end(stimset: np.array) -> np.array:
+
+def probe_block_end(stimset: np.ndarray) -> List:
     """
-    >>> foo = np.array([[0 , 11, 0 , 1 , 0],
-                        [1 , 0 , 0 , 10, 1],
-                        [0 , 10, 0 , 0 , 1])
+    >>> foo = np.array([[0 , 11, 0 , 1 , 0], [1 , 0 , 0 , 10, 1], [0 , 10, 0 , 0 , 1]])
     >>> probe_block_end(foo)
     [[0, 11], [0, 1, 0, 1, 0, 0, 10], [1, 0, 10], [0, 0, 1]]
     """
-
     stims = []
     stimset_ = []
     for stim in stimset.flatten():
@@ -55,7 +55,7 @@ while True:
     if validate_ids_itvl(ids_probe, cfg.n_trial, cfg.min_interval):
         break
 
-assert len(stimset) == len(ids_probe) # use strict arg in python 3.10
+assert len(stimset) == len(ids_probe) # use strict arg in python 3.10's zip()
 for stims, idx_probe in zip(stimset, ids_probe):
     stims[idx_probe] += PROBE_CODE
 

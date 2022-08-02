@@ -8,7 +8,7 @@ from src.general.fixation import fixation
 
 cfg = load_config('config/task.ini')
 display = Display(cfg.display.size, cfg.display.screen_id,
-                   cfg.color.back, cfg.color.main)
+                  cfg.color.back, cfg.color.main)
 button = Button()
 
 stimset = load_csv(cfg.mrt.path_stim)
@@ -33,8 +33,8 @@ while True:
         mrt = fixation(display, button)
 
     if phase == '1':
-        practice_mrt = MRT(display, button,
-                        stimset_practice, cfg.mrt_practice, o_path=None)
+        practice_mrt = MRT(display, button, stimset_practice, cfg.mrt_practice,
+                           o_path=None)
         practice_mrt.run()
 
     if phase == '2':

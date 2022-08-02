@@ -1,7 +1,8 @@
+from ..ppwrapper import Display, Button
 from ..const import BUTTONS
 
 
-def fixation(display, button):
+def fixation(display: Display, button: Button):
     button.clear()
     display.build()
     display.disp_text('+')
