@@ -1,0 +1,4 @@
+{
+    "python.linting.mypyEnabled": true,
+    "python.defaultInterpreterPath": "/opt/homebrew/Caskroom/miniconda/base/envs/s13t",
+}
