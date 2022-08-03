@@ -1,0 +1,1 @@
+- Refactor codes including type hinting.

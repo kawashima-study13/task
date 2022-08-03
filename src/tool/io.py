@@ -1,16 +1,17 @@
+from typing import List, Dict
 import configparser
 import json
 import csv
 
-from .dataclass import Dictm
+from .dataclass import Pathlike, Dictm
 
 
-def load_json(path):
+def load_json(path: Pathlike) -> Dict:
     with open(path, 'r') as f:
         return json.load(f)
 
 
-def load_config(path):
+def load_config(path: Pathlike) -> Dictm:
     def eachsection(parser, section):
         config = Dictm(parser.items(section))
         for key in config:
@@ -26,7 +27,7 @@ def load_config(path):
                  for section in parser.sections()})
 
 
-def load_csv(path, rm_empty=True):
+def load_csv(path: Pathlike, rm_empty: bool=True) -> List:
     with open(path) as f:
         reader = csv.reader(f)
         rows = []

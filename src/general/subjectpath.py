@@ -10,7 +10,7 @@ class _SubDir:
         self.is_empty_sub = False
         self.dir_home = Path().home() / 'desktop'
 
-    def ask_id(self, message):
+    def ask_id(self, message: str):
         while True:
             sub_id = input(message)
             if sub_id == '':

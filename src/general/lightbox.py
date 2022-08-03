@@ -9,7 +9,7 @@ def LightBox(*args, **kwargs):
 
 
 class _LightBox:
-    def __init__(self, window):
+    def __init__(self, window: visual.Window):
         self.window = window
 
         cfg = load_config('config/task.ini').display

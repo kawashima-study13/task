@@ -1,5 +1,10 @@
+from typing import Union
 from itertools import product
 
+from pathlib import Path
+
+
+Pathlike = Union[str, Path]
 
 class Dictm(dict):
     # https://blog.bitmeister.jp/?p=4658
