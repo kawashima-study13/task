@@ -1,6 +1,6 @@
 from src.tool.io import load_config, load_csv
 from src.ppwrapper.interface import Display, Button
-from src.mrt.mrt import MRT
+from src.mrt.mrt import MRTSimul
 from src.general.subjectpath import SubDir
 from src.general.inst_test import inst_test
 from src.general.fixation import fixation
@@ -33,13 +33,13 @@ while True:
         mrt = fixation(display, button)
 
     if phase == '1':
-        practice_mrt = MRT(display, button, stimset_practice, cfg.mrt_practice,
-                           o_path=None)
+        practice_mrt = MRTSimul(
+            display, button, stimset_practice, cfg.mrt_practice, o_path=None)
         practice_mrt.run()
 
     if phase == '2':
         o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
-        mrt = MRT(display, button, stimset, cfg.mrt, o_path=o_path)
+        mrt = MRTSimul(display, button, stimset, cfg.mrt, o_path=o_path)
         mrt.run()
         mrt.pbar.close()
     

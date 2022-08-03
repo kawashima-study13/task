@@ -17,8 +17,11 @@ class MRT(Task):
     def __init__(self, display: Display, button: Button,
                  stimset: tuple[tuple], cfg: Dictm, o_path: str | Path | None):
         super().__init__(display, button, stimset, cfg, o_path)
+        params = self.cfg.beep_dursec, self.cfg.use_ppsound
         self.data: List[Any] = []
         self.trigger = Trigger(cfg, mode=cfg.trigger_mode)
+        self.beep = dict(odd=Beep(self.cfg.odd_hz, *params),
+                         normal=Beep(self.cfg.normal_hz, *params))
 
     def log(self, message: str | tuple, code: str, value: Any=None):
         super().log(message, code)
@@ -31,15 +34,9 @@ class MRT(Task):
     def run_task_head(self):
         if self.button.abort: return
 
-        params = self.cfg.beep_dursec, self.cfg.use_ppsound
         if not self.display.is_built:
             self.display.build() # For Probe()
         self.probe = Probe(self.display.window)
-        self.beep = dict(odd=Beep(self.cfg.odd_hz, *params),
-                         normal=Beep(self.cfg.normal_hz, *params))
-        self.display.disp_text(('そのままお待ちください。',
-                                '(Press ENTER to test vol)'))
-        self.button.wait_keys(keys=['return'])
         self._run_test_volume()
         if self.button.abort: return
         super().run_task_head()
@@ -112,13 +109,8 @@ class MRT(Task):
             self.log(f'--- Present {type} stim {dursec} sec.', CODES.BEEP)
         self.beep[type].play()
 
-    def _run_test_volume(self):
+    def _metronome(self):
         RATE: int = 4
-        self.display.disp_text(('２種類の音が聞こえたら',
-                                '上ボタンで開始',
-                                '聞こえなかったら',
-                                '下ボタン'))
-        self.button.clear()
         i = 0
         t0 = clock.Clock()
         itvl = self.cfg.itvl_sec_pre + self.cfg.itvl_sec_post
@@ -129,15 +121,48 @@ class MRT(Task):
             self._present_beep(is_odd, self.cfg.beep_dursec, log=False)
             while t0.getTime() < itvl:
                 key = self.button.get_keyname()
-                if key in BUTTONS.SUB:
-                    self.display.disp_text(('そのままお待ちください。',
-                                            '(Volume is too low!',
-                                            'press QUIT key)'))
-                    self.button.wait(float('inf'))
+                if key in BUTTONS.ABORT:
                     self.abort = True
-                    return
-                if key in BUTTONS.MAIN:
-                    return
+                return key
+
+    def _run_test_volume(self):
+        self.display.disp_text(('音量確認中', '(Press any key to start)'))
+        key = self._metronome(self)
+        if key in BUTTONS.SUB:
+            self.abort = True
+
+
+class MRTSimul(MRT):
+    def __init__(self, *args, **kwargs):
+        self.super().__init__(*args, **kwargs)
+        self.cfg_simul = load_config('config/task.ini').mrt_simul
+
+    def _run_test_volume(self):
+        self.display.disp_text(('そのままお待ちください。',
+                                '(Press ENTER to test vol)'))
+        self.button.wait_keys(keys=['return'])
+
+        for n in range(self.cfg_simul.n_pulse_towait_bfr_voltune, 0, -1):
+            self.display.disp_text((f'(Waiting MRI pulses: {n})'))
+            key = self.button.wait_keys(keys=[BUTTONS.PULSE])
+
+        self.display.disp_text(('２種類の音が聞こえたら',
+                                '上ボタンで開始',
+                                '聞こえなかったら',
+                                '下ボタン'))
+        self.button.clear()
+
+        key = self._metronome(self)
+        if key in BUTTONS.SUB:
+            self.display.disp_text(('そのままお待ちください。',
+                                    '(Volume is too low!',
+                                    'press QUIT key)'))
+            self.button.wait(float('inf'))
+            return
+
+        self.display.disp_text(('そのままお待ちください。',
+                                '(Waiting a pulse)'))
+        self.button.wait_keys(keys=[BUTTONS.PULSE])
 
 
 if __name__ == '__main__':
