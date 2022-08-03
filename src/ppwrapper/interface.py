@@ -92,8 +92,8 @@ class Button:
 
         self.clear()
         if keys:
-            keys = tuple(keys)
-            keys + (BUTTONS.ABORT, BUTTONS.SKIP)
+            keys = list(keys)
+            keys += (BUTTONS.ABORT + BUTTONS.SKIP)
         pressed_keys = self.kb.waitKeys(
             maxWait=maxsec, keyList=keys, waitRelease=True)
         self.glob_key_event(pressed_keys[0])

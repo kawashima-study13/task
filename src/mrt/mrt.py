@@ -4,6 +4,7 @@ from typing import Any, List
 import pandas as pd
 from psychopy import core, clock
 
+from ..tool.io import load_config
 from ..tool.dataclass import Dictm
 from ..const import BUTTONS, CODES
 from ..general.trigger import Trigger
@@ -111,6 +112,7 @@ class MRT(Task):
 
     def _metronome(self):
         RATE: int = 4
+        self.button.clear()
         i = 0
         t0 = clock.Clock()
         itvl = self.cfg.itvl_sec_pre + self.cfg.itvl_sec_post
@@ -122,19 +124,19 @@ class MRT(Task):
             while t0.getTime() < itvl:
                 key = self.button.get_keyname()
                 if key in BUTTONS.ABORT:
-                    self.abort = True
-                return key
+                    self.button.abort = True
+                if key:
+                    return key
 
     def _run_test_volume(self):
-        self.display.disp_text(('音量確認中', '(Press any key to start)'))
-        key = self._metronome(self)
-        if key in BUTTONS.SUB:
-            self.abort = True
+        self.display.disp_text('ボタンを押して課題を開始してください。')
+        key = self._metronome()
+        if self.button.abort: return
 
 
 class MRTSimul(MRT):
     def __init__(self, *args, **kwargs):
-        self.super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.cfg_simul = load_config('config/task.ini').mrt_simul
 
     def _run_test_volume(self):
@@ -144,15 +146,16 @@ class MRTSimul(MRT):
 
         for n in range(self.cfg_simul.n_pulse_towait_bfr_voltune, 0, -1):
             self.display.disp_text((f'(Waiting MRI pulses: {n})'))
-            key = self.button.wait_keys(keys=[BUTTONS.PULSE])
+            key = self.button.wait_keys(keys=BUTTONS.PULSE)
 
         self.display.disp_text(('２種類の音が聞こえたら',
-                                '上ボタンで開始',
+                                '上ボタンで課題開始',
                                 '聞こえなかったら',
                                 '下ボタン'))
         self.button.clear()
 
-        key = self._metronome(self)
+        key = self._metronome()
+        if self.button.abort: return
         if key in BUTTONS.SUB:
             self.display.disp_text(('そのままお待ちください。',
                                     '(Volume is too low!',
@@ -162,7 +165,7 @@ class MRTSimul(MRT):
 
         self.display.disp_text(('そのままお待ちください。',
                                 '(Waiting a pulse)'))
-        self.button.wait_keys(keys=[BUTTONS.PULSE])
+        self.button.wait_keys(keys=BUTTONS.PULSE)
 
 
 if __name__ == '__main__':

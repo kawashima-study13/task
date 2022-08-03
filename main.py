@@ -1,6 +1,6 @@
 from src.tool.io import load_config, load_csv
 from src.ppwrapper.interface import Display, Button
-from src.mrt.mrt import MRTSimul
+from src.mrt.mrt import MRT, MRTSimul
 from src.general.subjectpath import SubDir
 from src.general.inst_test import inst_test
 from src.general.fixation import fixation
@@ -33,7 +33,7 @@ while True:
         mrt = fixation(display, button)
 
     if phase == '1':
-        practice_mrt = MRTSimul(
+        practice_mrt = MRT(
             display, button, stimset_practice, cfg.mrt_practice, o_path=None)
         practice_mrt.run()
 
