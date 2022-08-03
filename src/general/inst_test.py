@@ -2,7 +2,7 @@ from ..tool.dataclass import Dictm
 from ..const import BUTTONS, CODES
 from ..general.lightbox import LightBox 
 from ..general.trigger import Trigger
-from ..ppwrapper import Display, Button
+from ..ppwrapper.interface import Display, Button
 
 
 def inst_test(display: Display, button: Button, cfg: Dictm):
@@ -45,4 +45,4 @@ if __name__ == '__main__':
                       cfg.color.back, cfg.color.main)
     button = Button()
     display.build()
-    inst_test(display, button, cfg)
+    inst_test(display, button, cfg.mrt)

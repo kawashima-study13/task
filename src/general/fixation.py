@@ -1,4 +1,4 @@
-from ..ppwrapper import Display, Button
+from ..ppwrapper.interface import Display, Button
 from ..const import BUTTONS
 
 
