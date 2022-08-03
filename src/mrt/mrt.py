@@ -184,5 +184,3 @@ if __name__ == '__main__':
     mrt = MRT(display, button, stimset, cfg,
               o_path=log_path.parent / log_path.stem)
     mrt.run()
-
-    system('python -m src.mrt.debug.debug')
