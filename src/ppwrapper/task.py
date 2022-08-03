@@ -69,7 +69,7 @@ class Task:
     def run_task_tail(self):
         """Called from self.run(), override and use"""
         if self.button.abort: return
-        self.log('Task finished.', CODES.FIN_ALL)
+        self.log('Task finished.', CODES.FINTASK)
 
     def run_block(self, stims: Sequence):
         self.stims = stims

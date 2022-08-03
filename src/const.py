@@ -13,22 +13,22 @@ BUTTONS = Dictm({
 
 CODES = Dictm({ # Start timings
     # General
-    'TASK'       : 'C10',
-    'FIN_ALL'    : 'C11',
-    'BLOCK'      : 'C12',
-    'TRIAL'      : 'C13',
-    'BASE_PRE'   : 'C14',
-    'BASE_POST'  : 'C15',
     'MISC'       : 'C10',
+    'TASK'       : 'C11',  # Task started at this time
+    'FINTASK'    : 'C12',  # Task finished
+    'BLOCK'      : 'C13',  # A block started
+    'TRIAL'      : 'C14',  # A trial started
+    'BASE_PRE'   : 'C15',  # Baseline (pre) started
+    'BASE_POST'  : 'C16',  # Baseline (post) started
 
     # MRT
-    'ODD_TRIAL'  : 'C20',
-    'NORM_TRIAL' : 'C21',
-    'PROBE'      : 'C22',
-    'CHOICE'     : 'C23',
-    'BEEP'       : 'C24',
-    'PRESSED'    : 'C25',
-    'MWCAUGHT'   : 'C26',
+    'ODD_TRIAL'  : 'C20',  # Odd trial started (odd beep would be presented soon)
+    'NORM_TRIAL' : 'C21',  # Normal trial started
+    'PROBE'      : 'C22',  # Probe was presented
+    'CHOICE'     : 'C23',  # Participant answered to probe
+    'BEEP'       : 'C24',  # Odd or normal (see C20 or C21) beep was presented
+    'PRESSED'    : 'C25',  # Participant responded
+    'MWCAUGHT'   : 'C26',  # Participant responded as MW-caught
 })
 
 CODES_TO_LOG = [  # Set None and all codes will be annotated
