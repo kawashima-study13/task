@@ -4,7 +4,6 @@ from typing import Any, List
 import pandas as pd
 from psychopy import core, clock
 
-from ..tool.io import load_config
 from ..tool.dataclass import Dictm
 from ..const import BUTTONS, CODES
 from ..general.trigger import Trigger
@@ -127,21 +126,20 @@ class MRT(Task):
 
     def _run_test_volume(self):
         self.display.disp_text('ボタンを押して課題を開始してください。')
-        key = self._metronome()
+        _ = self._metronome()
         if self.button.abort: return
 
 
 class MRTSimul(MRT):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cfg_simul = load_config('config/task.ini').mrt_simul
 
     def _run_test_volume(self):
         self.display.disp_text(('そのままお待ちください。',
                                 '(Press ENTER to test vol)'))
         self.button.wait_keys(keys=['return'])
 
-        for n in range(self.cfg_simul.n_pulse_towait_bfr_voltune, 0, -1):
+        for n in range(self.cfg.n_mripulse_towait_bfr_voltune, 0, -1):
             self.display.disp_text((f'(Waiting MRI pulses: {n})'))
             key = self.button.wait_keys(keys=BUTTONS.PULSE)
 

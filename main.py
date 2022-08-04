@@ -40,7 +40,7 @@ while True:
         )))
 
     if phase == 'i':
-        inst_test(display, button, cfg.mrt)
+        inst_test(display, button, cfg.mrt_base.update(cfg.mrt_simul))
 
     if phase == 'f':
         mrt = fixation(display, button)
@@ -48,13 +48,14 @@ while True:
     if phase == '1':
         probe = make_probe_with_lightbox(display, cfg, 'intro.jpg')
         practice_mrt = MRT(display, button, stimset_practice, probe,
-                           cfg.mrt_practice, o_path=None)
+                           cfg.mrt_base.update(cfg.mrt_practice), o_path=None)
         practice_mrt.run()
 
     if phase == '2':
         probe = make_probe_with_lightbox(display, cfg, 'intro.jpg')
         o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
-        mrt = MRTSimul(display, button, stimset, probe, cfg.mrt, o_path=o_path)
+        mrt = MRTSimul(display, button, stimset, probe,
+                       cfg.mrt_base.update(cfg.mrt_simul), o_path=o_path)
         mrt.run()
         mrt.pbar.close()
     

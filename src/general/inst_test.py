@@ -5,12 +5,12 @@ from ..general.trigger import Trigger
 from ..ppwrapper.interface import Display, Button
 
 
-def inst_test(display: Display, button: Button, cfg: Dictm):
+def inst_test(display: Display, button: Button, cfg_task: Dictm):
     def disp(display: Display, lightbox: LightBox, message: str):
         lightbox.box.draw()
         display.disp_text(message)
 
-    trigger = Trigger(cfg, mode=cfg.trigger_mode)
+    trigger = Trigger(cfg_task, mode=cfg_task.trigger_mode)
     button.clear()
     display.build()
     lightbox = LightBox(display.window)
