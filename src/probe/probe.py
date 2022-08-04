@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 from pathlib import Path
 
@@ -12,7 +13,8 @@ from ..general.lightbox import LightBox
 
 class Probe:
     def __init__(self, window: visual.Window, filename_intro: str,
-                 cfg_colorname: Dictm, lightbox: Optional[LightBox]=None):
+                 cfg_colorname: Dictm, wait_sec: float=0.,
+                 lightbox: Optional[LightBox]=None):
         RATE_INTRO = 1.
         POS_RATE_Y_PROBE = .6 # 1.0 bottom
         N_TICKS = 5
@@ -43,16 +45,19 @@ class Probe:
             rightKeys=BUTTONS.RIGHT,
             skipKeys=None,
             noMouse=True,
+            maxTime=wait_sec,
             )
 
 
-    def present(self):
+    def present(self) -> int | None:
         while self.scale.noResponse:
             self.intro.draw()
             self.scale.draw()
             if self.lightbox:
                 self.lightbox.box.draw()  # type: ignore # lightbox.draw() duplicates .flip()
             self.window.flip()
+        if self.scale.timedOut:
+            return None
         rate = self.scale.getRating()
         self.scale.reset()
         return rate
@@ -66,5 +71,5 @@ if __name__ == '__main__':
 
     print('Probe for simultaneous recording')
     probe = Probe(display.window, 'intro.jpg', cfg.color_name,
-                  LightBox(display.window, cfg.display))
+                  wait_sec=5., lightbox=LightBox(display.window, cfg.display))
     print(probe.present())

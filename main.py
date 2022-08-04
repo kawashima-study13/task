@@ -14,7 +14,8 @@ def make_probe_with_lightbox(display: Display, cfg: Dictm, probe_filename
     if not display.is_built:
         display.build() # For Probe()
     lightbox = LightBox(display.window, cfg.display)
-    probe = Probe(display.window, probe_filename, cfg.color_name, lightbox)
+    probe = Probe(display.window, probe_filename, cfg.color_name,
+                  cfg.mrt_simul.probe_wait_sec, lightbox)
     return probe
 
 
