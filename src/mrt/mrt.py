@@ -15,14 +15,15 @@ from .sound import Beep
 
 
 class MRT(Task):
-    def __init__(self, display: Display, button: Button,
-                 stimset: tuple[tuple], cfg: Dictm, o_path: str | Path | None):
-        super().__init__(display, button, stimset, cfg, o_path)
+    def __init__(self, display: Display, button: Button, stimset: tuple[tuple],
+                 probe: Probe, cfg_mrt: Dictm, o_path: str | Path | None):
+        super().__init__(display, button, stimset, cfg_mrt, o_path)
         params = self.cfg.beep_dursec, self.cfg.use_ppsound
         self.data: List[Any] = []
-        self.trigger = Trigger(cfg, mode=cfg.trigger_mode)
+        self.trigger = Trigger(self.cfg, mode=self.cfg.trigger_mode)
         self.beep = dict(odd=Beep(self.cfg.odd_hz, *params),
                          normal=Beep(self.cfg.normal_hz, *params))
+        self.probe = probe
 
     def log(self, message: str | tuple, code: str, value: Any=None):
         super().log(message, code)
@@ -34,10 +35,6 @@ class MRT(Task):
 
     def run_task_head(self):
         if self.button.abort: return
-
-        if not self.display.is_built:
-            self.display.build() # For Probe()
-        self.probe = Probe(self.display.window)
         self._run_test_volume()
         if self.button.abort: return
         super().run_task_head()
@@ -169,21 +166,24 @@ class MRTSimul(MRT):
 
 
 if __name__ == '__main__':
-    from os import system
     from pathlib import Path
     from src.tool.io import load_config, load_csv
     from src.ppwrapper.interface import Display, Button
+    from src.probe.probe import Probe
 
 
     log_path = Path('src/mrt/debug/debug.csv.log')
     log_path.unlink(missing_ok=True)
 
+    cfg = load_config('config/task.ini')
+
     display = Display()
     button = Button()
     display.build()
 
-    cfg = load_config('config/task.ini').mrt
+    probe = Probe(display.window, 'intro.jpg', cfg.color_name, 5.)
+
     stimset = load_csv('src/mrt/stim/stim_dbg.csv')
-    mrt = MRT(display, button, stimset, cfg,
+    mrt = MRT(display, button, stimset, probe, cfg.mrt,
               o_path=log_path.parent / log_path.stem)
     mrt.run()

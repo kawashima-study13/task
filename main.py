@@ -1,9 +1,21 @@
 from src.tool.io import load_config, load_csv
+from src.tool.dataclass import Dictm
 from src.ppwrapper.interface import Display, Button
 from src.mrt.mrt import MRT, MRTSimul
 from src.general.subjectpath import SubDir
 from src.general.inst_test import inst_test
 from src.general.fixation import fixation
+from src.general.lightbox import LightBox
+from src.probe.probe import Probe
+
+
+def make_probe_with_lightbox(display: Display, cfg: Dictm, probe_filename
+                             ) -> Probe:
+    if not display.is_built:
+        display.build() # For Probe()
+    lightbox = LightBox(display.window, cfg.display)
+    probe = Probe(display.window, probe_filename, cfg.color_name, lightbox)
+    return probe
 
 
 cfg = load_config('config/task.ini')
@@ -33,13 +45,15 @@ while True:
         mrt = fixation(display, button)
 
     if phase == '1':
-        practice_mrt = MRT(
-            display, button, stimset_practice, cfg.mrt_practice, o_path=None)
+        probe = make_probe_with_lightbox(display, cfg, 'intro.jpg')
+        practice_mrt = MRT(display, button, stimset_practice, probe,
+                           cfg.mrt_practice, o_path=None)
         practice_mrt.run()
 
     if phase == '2':
+        probe = make_probe_with_lightbox(display, cfg, 'intro.jpg')
         o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
-        mrt = MRTSimul(display, button, stimset, cfg.mrt, o_path=o_path)
+        mrt = MRTSimul(display, button, stimset, probe, cfg.mrt, o_path=o_path)
         mrt.run()
         mrt.pbar.close()
     
