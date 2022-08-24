@@ -33,6 +33,7 @@ CODES = Dictm({ # Start timings
 
 CODES_TO_LOG = [  # Set None and all codes will be annotated
     # General
+    CODES.MISC,
     CODES.TASK,
     CODES.FINTASK,
     CODES.BASE_PRE,
