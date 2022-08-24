@@ -57,6 +57,7 @@ class Probe:
                 self.lightbox.box.draw()  # type: ignore # lightbox.draw() duplicates .flip()
             self.window.flip()
         if self.scale.timedOut:
+            self.scale.reset()
             return None
         rate = self.scale.getRating()
         self.scale.reset()
