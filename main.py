@@ -24,7 +24,7 @@ display = Display(cfg.display.size, cfg.display.screen_id,
                   cfg.color.back, cfg.color.main)
 button = Button()
 
-stimset = load_csv(cfg.mrt.path_stim)
+stimset = load_csv(cfg.mrt_base.path_stim)
 stimset_practice = load_csv(cfg.mrt_practice.path_stim)
 
 sub_dir = SubDir().ask_id('Enter sub. ID (s3001~): ').make_dir()
@@ -40,7 +40,7 @@ while True:
         )))
 
     if phase == 'i':
-        inst_test(display, button, cfg.mrt_base.update(cfg.mrt_simul))
+        inst_test(display, button, Dictm(cfg.mrt_base | cfg.mrt_simul), cfg.display)
 
     if phase == 'f':
         mrt = fixation(display, button)
@@ -48,14 +48,15 @@ while True:
     if phase == '1':
         probe = make_probe_with_lightbox(display, cfg, 'intro.jpg')
         practice_mrt = MRT(display, button, stimset_practice, probe,
-                           cfg.mrt_base.update(cfg.mrt_practice), o_path=None)
+                           Dictm(cfg.mrt_base | cfg.mrt_practice), o_path=None)
         practice_mrt.run()
 
     if phase == '2':
         probe = make_probe_with_lightbox(display, cfg, 'intro.jpg')
         o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
+        cfg.mrt_base.update(cfg.mrt_simul)
         mrt = MRTSimul(display, button, stimset, probe,
-                       cfg.mrt_base.update(cfg.mrt_simul), o_path=o_path)
+                       Dictm(cfg.mrt_base | cfg.mrt_simul), o_path=o_path)
         mrt.run()
         mrt.pbar.close()
     

@@ -5,7 +5,7 @@ from ..general.trigger import Trigger
 from ..ppwrapper.interface import Display, Button
 
 
-def inst_test(display: Display, button: Button, cfg_task: Dictm):
+def inst_test(display: Display, button: Button, cfg_task: Dictm, cfg_display: Dictm):
     def disp(display: Display, lightbox: LightBox, message: str):
         lightbox.box.draw()
         display.disp_text(message)
@@ -13,7 +13,7 @@ def inst_test(display: Display, button: Button, cfg_task: Dictm):
     trigger = Trigger(cfg_task, mode=cfg_task.trigger_mode)
     button.clear()
     display.build()
-    lightbox = LightBox(display.window)
+    lightbox = LightBox(display.window, cfg_display)
     display.disp_text(f'TEST: Press {BUTTONS.ABORT} and quit.')
     while True:
         key = button.get_keyname()
