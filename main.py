@@ -27,7 +27,7 @@ button = Button()
 stimset = load_csv(cfg.mrt_base.path_stim)
 stimset_practice = load_csv(cfg.mrt_practice.path_stim)
 
-sub_dir = SubDir().ask_id('Enter sub. ID (s3001~): ').make_dir()
+sub_dir = SubDir().ask_id('Input sub. ID (s3001~): ').make_dir()
 
 while True:
     phase = input('\n'.join((

@@ -14,7 +14,7 @@ class _SubDir:
         while True:
             sub_id = input(message)
             if sub_id == '':
-                if input('WONT SAVE! n to cancel: ') != 'n':
+                if input('WONT SAVE! n to reinput ID: ') != 'n':
                     self.is_empty_sub = True
                     return self
                 continue
@@ -22,7 +22,7 @@ class _SubDir:
                 print('ID must be s3xxx')
                 continue
             elif (self.dir_home / sub_id).exists():
-                if input('Already exists. n to cancel: ') != 'n':
+                if input('Already exists. n to reinput ID: ') != 'n':
                     break
                 continue
             break
