@@ -17,21 +17,26 @@ class Probe:
                  lightbox: Optional[LightBox]=None):
         RATE_INTRO = 1.
         POS_RATE_Y_PROBE = .6 # 1.0 bottom
+        POS_RATE_Y_TEXT = -.6 # 1.0 bottom
         N_TICKS = 5
         START_TICK = 2
 
+        pos_y_probe = (window.size[1] / -2.) * POS_RATE_Y_PROBE
+        pos_y_text = (window.size[1] / -2.) * POS_RATE_Y_TEXT
+
         self.window = window
         self.lightbox = lightbox
+        self.additonal_text = visual.TextStim(
+            window, text='', pos=(0., pos_y_text), color=cfg_colorname.main)
 
         path = Path(__file__).parent / filename_intro
         self.intro = visual.ImageStim(window, image=path, units='norm')
         self.intro.size = self.intro.size / self.intro.size[0] * RATE_INTRO
 
-        pos_y = (window.size[1] / -2.) * POS_RATE_Y_PROBE
         self.scale = visual.RatingScale(
             win=window,
             low=0, high=N_TICKS - 1,
-            pos=(0., pos_y),
+            pos=(0., pos_y_probe),
             labels=('', ''),
             scale=None,
             marker='glow',
@@ -49,8 +54,10 @@ class Probe:
             )
 
 
-    def present(self) -> int | None:
+    def present(self, text: str='') -> int | None:
+        self.additonal_text.setText(text)
         while self.scale.noResponse:
+            self.additonal_text.draw()
             self.intro.draw()
             self.scale.draw()
             if self.lightbox:
@@ -66,11 +73,11 @@ class Probe:
 
 if __name__ == '__main__':
     cfg = load_config('config/task.ini')
-    display = Display((500, 500), cfg.display.screen_id,
+    display = Display((1280, 960), cfg.display.screen_id,
                       cfg.color.back, cfg.color.main)
     display.build()
 
     print('Probe for simultaneous recording')
     probe = Probe(display.window, 'intro.jpg', cfg.color_name,
                   wait_sec=5., lightbox=LightBox(display.window, cfg.display))
-    print(probe.present())
+    print(probe.present('12/18'))

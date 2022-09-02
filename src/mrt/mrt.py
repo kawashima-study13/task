@@ -61,7 +61,8 @@ class MRT(Task):
 
     def run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)
-        rate = self.probe.present()
+        rate = self.probe.present(
+            f'{self.progress.block + 1}/{len(self.stimset)}')
         self.log(f'---- Answer: {rate}', CODES.CHOICE, rate)
         self.display.disp_text('o')
         self.button.clear()
