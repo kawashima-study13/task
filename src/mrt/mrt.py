@@ -64,6 +64,8 @@ class MRT(Task):
         rate = self.probe.present(
             f'{self.progress.block + 1}/{len(self.stimset)}')
         self.log(f'---- Answer: {rate}', CODES.CHOICE, rate)
+        self.display.disp_text('+')
+        self.button.wait(self.cfg.itvl_aft_probe)
         self.display.disp_text('o')
         self.button.clear()
 
