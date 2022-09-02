@@ -36,8 +36,8 @@ class MRT(Task):
         if self.button.abort: return
         self._run_test_volume()
         if self.button.abort: return
-        super().run_task_head()
         self._run_baseline(self.cfg.sec_baseline_pre, 'pre')
+        super().run_task_head()
         self.pbar.start()
         self.display.disp_text('o')
 
@@ -165,8 +165,8 @@ class MRTSimul(MRT):
             self.button.wait(float('inf'))
             return
         if key in BUTTONS.MAIN:
-        self.display.disp_text('+')
-        self.wait_mripulse(self.cfg.n_mripulse_towait_aft_voltune)
+            self.display.disp_text('+')
+            self.wait_mripulse(self.cfg.n_mripulse_towait_aft_voltune)
 
 
 if __name__ == '__main__':
