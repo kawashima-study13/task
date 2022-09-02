@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from ..tool.dataclass import Pathlike
@@ -14,7 +15,7 @@ class _SubDir:
         self.is_empty_sub = False
         self.dir_home = Path(dir_home)
 
-    def ask_id(self, message: str):
+    def ask_id(self, message: str, pattern: str):
         while True:
             sub_id = input(message)
             if sub_id == '':
@@ -22,8 +23,8 @@ class _SubDir:
                     self.is_empty_sub = True
                     return self
                 continue
-            elif (not sub_id.startswith('s3')) or (len(sub_id) != 5):
-                print('ID must be s3xxx')
+            elif re.match(pattern, sub_id) is None:
+                print(f'ID is invalid (pattern: {pattern})')
                 continue
             elif (self.dir_home / sub_id).exists():
                 if input('Already exists. n to cancel: ') != 'n':
