@@ -39,7 +39,8 @@ while True:
         )))
 
     if phase == 'i':
-        inst_test(display, button, Dictm(cfg.mrt_base | cfg.mrt_simul), cfg.display)
+        inst_test(
+            display, button, Dictm(cfg.mrt_base | cfg.mrt_simul), cfg.display)
 
     if phase == 'f':
         mrt = fixation(display, button)
