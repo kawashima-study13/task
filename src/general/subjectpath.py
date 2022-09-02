@@ -1,14 +1,18 @@
 from pathlib import Path
 
+from ..tool.dataclass import Pathlike
 
-def SubDir():
-    return _SubDir()
+
+def SubDir(*args):
+    return _SubDir(*args)
 
 
 class _SubDir:
-    def __init__(self):
+    def __init__(self, dir_home: Pathlike):
+        if dir_home == 'desktop':
+            dir_home = Path().home() / 'desktop'
         self.is_empty_sub = False
-        self.dir_home = Path().home() / 'desktop'
+        self.dir_home = Path(dir_home)
 
     def ask_id(self, message: str):
         while True:
