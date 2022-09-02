@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, List
+from typing import Optional, Any, Sequence, List
 
 import pandas as pd
 from psychopy import core, clock
@@ -109,7 +109,7 @@ class MRT(Task):
             self.log(f'--- Present {type} stim {dursec} sec.', CODES.BEEP)
         self.beep[type].play()
 
-    def _metronome(self):
+    def _metronome(self, keys: Optional[Sequence]=None):
         RATE: int = 4
         self.button.clear()
         i = 0
@@ -121,7 +121,7 @@ class MRT(Task):
             is_odd = not (i % RATE)
             self._present_beep(is_odd, self.cfg.beep_dursec, log=False)
             while t0.getTime() < itvl:
-                key = self.button.get_keyname()
+                key = self.button.get_keyname(keys)
                 if key in BUTTONS.ABORT:
                     self.button.abort = True
                 if key:
@@ -156,7 +156,7 @@ class MRTSimul(MRT):
                                 '下ボタン'))
         self.button.clear()
 
-        key = self._metronome()
+        key = self._metronome(BUTTONS.MAIN + BUTTONS.SUB)
         if self.button.abort: return
         if key in BUTTONS.SUB:
             self.display.disp_text(('そのままお待ちください。',
@@ -164,7 +164,7 @@ class MRTSimul(MRT):
                                     'press QUIT key)'))
             self.button.wait(float('inf'))
             return
-
+        if key in BUTTONS.MAIN:
         self.display.disp_text('+')
         self.wait_mripulse(self.cfg.n_mripulse_towait_aft_voltune)
 
