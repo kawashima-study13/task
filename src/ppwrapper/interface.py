@@ -117,9 +117,13 @@ class Button:
             stdout.write('\r===== {:.1f} sec. ====='.format(t0.getTime()))
             stdout.flush()
 
-    def get_keyname(self, at_release: bool=False):
-        keys = self.kb.getKeys(waitRelease=at_release)
-        return keys[0].name if keys else None
+    def get_keyname(self, keys: Optional[Sequence]=None,
+                    at_release: bool=False):
+        if keys:
+            keys = list(keys)
+            keys += (BUTTONS.ABORT + BUTTONS.SKIP)
+        pressed_keys = self.kb.getKeys(keyList=keys, waitRelease=at_release)
+        return pressed_keys[0].name if pressed_keys else None
 
 
 if __name__ == '__main__':
