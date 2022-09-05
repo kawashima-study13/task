@@ -2,6 +2,7 @@
 
 - Task wait to start metronome after probe presentation
 - Display the progress on probe
+- Modify wording in probe slightly
 
 # Bugfix
 
