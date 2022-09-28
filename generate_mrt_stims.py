@@ -1,6 +1,7 @@
 from typing import List
 import random
 import csv
+from pathlib import Path
 
 from src.tool.io import load_config
 from src.tool.dataclass import Dictm
@@ -8,7 +9,7 @@ from src.tool.dataclass import Dictm
 
 random.seed(2022)
 cfg = load_config('config/stim_generation.ini').mrt
-O_PATH = 'src/mrt/stim/stim.csv'
+O_DIR = Path('src/mrt/stim')
 CODE_ODD = 1
 CODE_NML = 0
 
@@ -49,10 +50,11 @@ def validate_stims(stimset: List[List[int]], cfg: Dictm) -> bool:
     return True
 
 
-stims = make_random_order_odd_normal(cfg)
-stimset = divide_stims_into_blocks(stims, cfg)
-validate_stims(stimset, cfg)
+for phase in ('thought', 'breath', 'color'):
+    stims = make_random_order_odd_normal(cfg)
+    stimset = divide_stims_into_blocks(stims, cfg)
+    validate_stims(stimset, cfg)
 
-with open(O_PATH, 'w') as f:
-    writer = csv.writer(f)
-    writer.writerows(stimset)
+    with open(O_DIR / f'stim_{phase}.csv', 'w') as f:
+        writer = csv.writer(f)
+        writer.writerows(stimset)

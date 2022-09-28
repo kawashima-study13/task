@@ -27,8 +27,9 @@ def start_mrt(mode: Literal['thought', 'breath', 'color'], cfg_task: Dictm):
     if sub_dir.get_dir():
         o_path = str(sub_dir.get_dir() / f'mrt_{mode}')
 
-    mrtclass = MRTColor if mode == 'color' else MRT
+    stimset = load_csv(cfg_task.path_stim)
 
+    mrtclass = MRTColor if mode == 'color' else MRT
     mrt = mrtclass(
         display, button, stimset, probe, cfg_task, o_path=o_path + '.csv')
     recorder.init_monitor().init_record(o_path + '.eeg')
@@ -47,9 +48,6 @@ recorder = BrainVisionRec(cfg.recorder.path_recapp, maximize_window=True,
                           locfile=cfg.recorder.path_recloc)
 recorder.open_workspace(cfg.recorder.name_workspace)
 recorder.init_monitor()
-
-stimset = load_csv(cfg.mrt_base.path_stim)
-stimset_practice = load_csv(cfg.mrt_practice.path_stim)
 
 sub_dir = SubDir(cfg.misc.dir_save)
 sub_dir.ask_id('Enter sub. ID (s3001~): ', cfg.misc.reg_subid).make_dir()
@@ -74,16 +72,17 @@ while True:
         cfg_task = Dictm(cfg.mrt_base | cfg.mrt_practice)
         probe = make_probe(
             display, cfg_task, cfg.color_name, 'intro_thought.jpg')
+        stimset_practice = load_csv(cfg.mrt_practice.path_stim)
         practice_mrt = MRT(display, button, stimset_practice, probe,
                            cfg_task, o_path=None)
         practice_mrt.run()
 
     if phase == 't':
-        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly)
+        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_thought)
         start_mrt('thought', cfg_task)
 
     if phase == 'b':
-        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly)
+        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_breath)
         start_mrt('breath', cfg_task)
 
     if phase == 'c':
