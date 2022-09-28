@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Any, Sequence, List
+import random
 
 import pandas as pd
 from psychopy import core, clock
@@ -61,8 +62,7 @@ class MRT(Task):
 
     def run_block_tail(self):
         self.log('--- Probe presented', CODES.PROBE)
-        rate = self.probe.present(
-            f'{self.progress.block + 1}/{len(self.stimset)}')
+        rate = self._present_probe()
         self.log(f'---- Answer: {rate}', CODES.CHOICE, rate)
         self.display.disp_text('+')
         self.button.wait(self.cfg.itvl_aft_probe)
@@ -90,6 +90,10 @@ class MRT(Task):
         while self.timer.trial.getTime() <= dursec_trial:
             core.wait(self.button.itvl_input)
             self._get_press(at_release=False)
+
+    def _present_probe(self):
+        return self.probe.present(
+            f'{self.progress.block + 1}/{len(self.stimset)}')
 
     def _get_press(self, at_release: bool):
         if key := self.button.get_keyname(at_release=at_release):
@@ -169,6 +173,23 @@ class MRTSimul(MRT):
             self.wait_mripulse(self.cfg.n_mripulse_towait_aft_voltune)
 
 
+class MRTColor(MRT):
+    def _gen_color(self):
+        MAX_BRIGHT = .1
+        MIN_BRIGHT = 1.
+        random.seed(int(''.join(self.stims)))
+        color_h = random.random() * 360.
+        color_v = random.uniform(MIN_BRIGHT, MAX_BRIGHT)
+        color_s = 1.
+        return color_h, color_s, color_v
+
+    def _present_probe(self):
+        self.probe.additional_text.setColor(self._gen_color(), 'hsv')
+        return self.probe.present(
+            f'{self.progress.block + 1}/{len(self.stimset)}\n'
+            '⬛')
+
+
 if __name__ == '__main__':
     from pathlib import Path
     from src.tool.io import load_config, load_csv
@@ -185,9 +206,23 @@ if __name__ == '__main__':
     button = Button()
     display.build()
 
-    probe = Probe(display.window, 'intro.jpg', cfg.color_name, 5.)
+    if False:
+        probe = Probe(display.window, 'intro.jpg', cfg.color_name,
+                      rate_y_text=-.15, textsize=32., wait_sec=5.)
+        stimset = load_csv('src/mrt/stim/stim_dbg.csv')
+        mrt = MRT(display, button, stimset, probe, cfg.mrt_base,
+                o_path=log_path.parent / log_path.stem)
+        mrt.run()
+    if True:
+        # Check color probes
+        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_color)
+        probe = Probe(display.window, 'intro_color.jpg', cfg.color_name,
+                      rate_y_text=cfg_task.rate_y_probetext,
+                      textsize=cfg_task.size_probetext, wait_sec=5.)
+        stimset = load_csv('src/mrt/stim/stim.csv')
+        mrt = MRTColor(display, button, stimset, probe, cfg_task,
+                       o_path=log_path.parent / log_path.stem)
+        for stims in stimset:
+            mrt.stims = stims
+            mrt._present_probe()
 
-    stimset = load_csv('src/mrt/stim/stim_dbg.csv')
-    mrt = MRT(display, button, stimset, probe, cfg.mrt,
-              o_path=log_path.parent / log_path.stem)
-    mrt.run()

@@ -2,4 +2,4 @@ launch.json
 .DS_Store
 *.pyc
 *.log
-*.png
+._*

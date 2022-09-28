@@ -8,11 +8,13 @@ from src.general.fixation import fixation
 from src.probe.probe import Probe
 
 
-def make_probe(display: Display, cfg: Dictm, probe_filename) -> Probe:
+def make_probe(display: Display, cfg_task: Dictm, color_name: Dictm,
+               probe_filename: str) -> Probe:
     if not display.is_built:
         display.build() # For Probe()
-    probe = Probe(display.window, probe_filename, cfg.color_name,
-                  cfg.mrt_simul.probe_wait_sec)
+    probe = Probe(display.window, probe_filename, color_name,
+                  cfg_task.rate_y_probetext, cfg_task.size_probetext,
+                  cfg_task.probe_wait_sec)
     return probe
 
 
@@ -39,24 +41,25 @@ while True:
         )))
 
     if phase == 'i':
-        inst_test(
-            display, button, Dictm(cfg.mrt_base | cfg.mrt_simul), cfg.display)
+        inst_test(display, button, cfg_display=cfg.display,
+                  cfg_task=Dictm(cfg.mrt_base | cfg.mrt_simul))
 
     if phase == 'f':
         mrt = fixation(display, button)
 
     if phase == '1':
-        probe = make_probe(display, cfg, 'intro.jpg')
+        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_practice)
+        probe = make_probe(display, cfg_task, cfg.color_name, 'intro.jpg')
         practice_mrt = MRT(display, button, stimset_practice, probe,
-                           Dictm(cfg.mrt_base | cfg.mrt_practice), o_path=None)
+                           cfg_task, o_path=None)
         practice_mrt.run()
 
     if phase == '2':
-        probe = make_probe(display, cfg, 'intro.jpg')
+        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_simul)
+        probe = make_probe(display, cfg_task, cfg.color_name, 'intro.jpg')
         o_path = sub_dir.get_dir() / 'mrt.csv' if sub_dir.get_dir() else None
-        cfg.mrt_base.update(cfg.mrt_simul)
         mrt = MRTSimul(display, button, stimset, probe,
-                       Dictm(cfg.mrt_base | cfg.mrt_simul), o_path=o_path)
+                       cfg_task, o_path=o_path)
         mrt.run()
         mrt.pbar.close()
     
