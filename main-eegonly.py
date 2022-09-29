@@ -77,17 +77,29 @@ while True:
                            cfg_task, o_path=None)
         practice_mrt.run()
 
-    if phase == 't':
-        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_thought)
-        start_mrt('thought', cfg_task)
+    mrt_types = ['t', 'b', 'c']
+    if phase in mrt_types:
+        for mrt_type in mrt_types:
+            if mrt_type == phase:
+                break
+            mrt_types.drop(0)
 
-    if phase == 'b':
-        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_breath)
-        start_mrt('breath', cfg_task)
+        for type in mrt_types:
+            if type == 't':
+                cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly)
+                start_mrt('thought', cfg_task)
 
-    if phase == 'c':
-        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_color)
-        start_mrt('color', cfg_task)
+            if type == 'b':
+                cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly)
+                start_mrt('breath', cfg_task)
+
+            if type == 'c':
+                cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_color)
+                start_mrt('color', cfg_task)
+
+            if type == mrt_types[-1]:
+                break
+            button.wait_with_stdtimer()
 
     if phase == 'e':
         recorder.stop_all()
