@@ -22,7 +22,7 @@ def load_config(path: Pathlike) -> Dictm:
         return config
 
     parser = configparser.ConfigParser()
-    parser.read(path)
+    parser.read(path, encoding='utf-8')
     return Dictm({section: eachsection(parser, section)
                  for section in parser.sections()})
 

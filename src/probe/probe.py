@@ -29,8 +29,8 @@ class Probe:
             window, text='', pos=(0., pos_y_text), color=cfg_colorname.main,
             height=textsize)
 
-        path = Path(__file__).parent / filename_intro
-        self.intro = visual.ImageStim(window, image=path, units='norm')
+        self.path_intro = Path(__file__).parent / filename_intro
+        self.intro = visual.ImageStim(window, image=self.path_intro, units='norm')
         self.intro.size = self.intro.size / self.intro.size[0] * RATE_INTRO
 
         self.scale = visual.RatingScale(

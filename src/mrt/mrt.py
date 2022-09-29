@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Any, Sequence, List
+from pathlib import Path
 import random
 
 import pandas as pd
@@ -132,7 +133,10 @@ class MRT(Task):
                     return key
 
     def _run_test_volume(self):
-        self.display.disp_text('ボタンを押して課題を開始してください。')
+        self.display.disp_text((
+            'ボタンを押して課題を開始してください。',
+            f'このフェーズでは、\n{self.cfg.message}について'
+            '\n質問されます。'))
         _ = self._metronome()
         if self.button.abort: return
 
@@ -188,6 +192,16 @@ class MRTColor(MRT):
         return self.probe.present(
             f'{self.progress.block + 1}/{len(self.stimset)}\n'
             '⬛')
+
+
+class MRTPractice(MRTColor):
+    def _present_probe(self):
+        message = f'{self.progress.block + 1}/{len(self.stimset)}'
+        probe = self.probe[self.progress.block]
+        if probe.path_intro.stem.endswith('_color'):
+            probe.additional_text.setColor(self._gen_color(), 'hsv')
+            message += '\n⬛'
+        return probe.present(message)
 
 
 if __name__ == '__main__':
