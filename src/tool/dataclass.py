@@ -21,10 +21,4 @@ class Dictm(dict):
             yield p + (verb,)
 
     def __or__(self, other):
-        self.__dict__ = dict(self) | dict(other)
-        return self
-
-foo = Dictm({'a': 0, 'b': 1})
-bar = Dictm({'c': 2})
-baa = Dictm({'d': 3})
-print(foo | bar)
+        return Dictm(dict(self) | dict(other))
