@@ -1,4 +1,6 @@
-from typing import Literal
+from __future__ import annotations
+from typing import Literal, Tuple, List
+from itertools import permutations
 
 from src.tool.io import load_config, load_csv
 from src.tool.dataclass import Dictm
@@ -31,13 +33,43 @@ def start_mrt(mode: Literal['thought', 'breath', 'color'], cfg_task: Dictm):
 
     mrtclass = MRTColor if mode == 'color' else MRT
     mrt = mrtclass(
-        display, button, stimset, probe, cfg_task, o_path=o_path + '.csv')
-    recorder.init_monitor().init_record(o_path + '.eeg')
+        display, button, stimset, probe, cfg_task,
+        o_path=o_path + '.csv' if o_path else None)
+    if o_path:
+        recorder.init_monitor().init_record(o_path + '.eeg')
     mrt.run()
     print('debug1')
     recorder.stop_record()
     print('debug1')
     mrt.pbar.close()
+
+
+def order_mrt(sub_id: str | None) -> Tuple[List, List]:
+    FIXED_ID = 3000
+    N_PATTERN = 6
+    MRT_TYPES = ('t', 'b', 'c')
+    MRT_MESSAGES = (
+        't. Run MRT with thought probe',
+        'b. Run MRT with breath probe',
+        'c. Run MRT with color probe')
+    BASE_MENU = (
+        '',
+        'Input phase char and enter:'
+        '',
+        'e. End',
+        'i. Instrument test',
+        'p. Practice MRT with thought probe',
+    )
+
+    if sub_id is None:
+        return MRT_TYPES, BASE_MENU + MRT_MESSAGES
+
+    sub_id = int(sub_id[1:]) - FIXED_ID
+    pattern = sub_id % N_PATTERN
+    mrt_types = list(permutations(MRT_TYPES))[pattern]
+    mrt_menu = list(permutations(MRT_MESSAGES))[pattern]
+    phase_menu = BASE_MENU + mrt_menu
+    return list(mrt_types), phase_menu
 
 
 cfg = load_config('config/task.ini')
@@ -52,58 +84,56 @@ recorder.init_monitor()
 sub_dir = SubDir(cfg.misc.dir_save)
 sub_dir.ask_id('Enter sub. ID (s3001~): ', cfg.misc.reg_subid).make_dir()
 
+mrt_types, phase_menu = order_mrt(sub_dir.sub_id)
+
 while True:
-    phase = input('\n'.join((
-        '',
-        'i. Instrument test',
-        'p. Practice MRT with thought probe',
-        't. Run MRT with thought probe',
-        'b. Run MRT with breath probe',
-        'c. Run MRT with color probe',
-        'e. End',
-        'Input phase char and enter: ',
-        )))
+    phase = input('\n'.join(phase_menu + ('\n',)))
 
     if phase == 'i':
         inst_test(display, button,
                   Dictm(cfg.mrt_base | cfg.mrt_eegonly), cfg.display)
 
-    if phase == 'p':
-        cfg_task = Dictm(cfg.mrt_base | cfg.mrt_practice)
-        probe = make_probe(
-            display, cfg_task, cfg.color_name, 'intro_thought.jpg')
-        stimset_practice = load_csv(cfg.mrt_practice.path_stim)
-        practice_mrt = MRT(display, button, stimset_practice, probe,
-                           cfg_task, o_path=None)
+    elif phase == 'p':
+        cfg_task = cfg.mrt_base | cfg.mrt_practice
+        probes = (
+            make_probe(display, cfg_task, cfg.color_name, 'intro_thought.jpg'),
+            make_probe(display, cfg_task, cfg.color_name, 'intro_breath.jpg'),
+            make_probe(display, cfg_task, cfg.color_name, 'intro_color.jpg'))
+        stimset_practice = load_csv(cfg_task.path_stim)
+        practice_mrt = MRTPractice(
+            display, button, stimset_practice, probes, cfg_task, o_path=None)
         practice_mrt.run()
 
-    mrt_types = ['t', 'b', 'c']
-    if phase in mrt_types:
-        for mrt_type in mrt_types:
+    elif phase in mrt_types:
+        mrt_types_ = tuple(mrt_types)
+        for mrt_type in mrt_types_:  # tuple because content of mrt_types pops
             if mrt_type == phase:
                 break
-            mrt_types.drop(0)
+            mrt_types.pop(0)
 
-        for type in mrt_types:
-            if type == 't':
-                cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly)
+        for mrt_type in mrt_types:
+            if mrt_type == 't':
+                cfg_task = cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_thought
                 start_mrt('thought', cfg_task)
 
-            if type == 'b':
-                cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly)
+            if mrt_type == 'b':
+                cfg_task = cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_breath
                 start_mrt('breath', cfg_task)
 
-            if type == 'c':
-                cfg_task = Dictm(cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_color)
+            if mrt_type == 'c':
+                cfg_task = cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_color
                 start_mrt('color', cfg_task)
 
-            if type == mrt_types[-1]:
+            if mrt_type == mrt_types[-1]:
                 break
             button.wait_with_stdtimer()
 
-    if phase == 'e':
+    elif phase == 'e':
         recorder.stop_all()
         break
+
+    else:
+        continue
     
     button.abort = False
     display.close()

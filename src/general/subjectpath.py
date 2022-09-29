@@ -21,6 +21,7 @@ class _SubDir:
             if sub_id == '':
                 if input('WONT SAVE! n to reinput ID: ') != 'n':
                     self.is_empty_sub = True
+                    self.sub_id = None
                     return self
                 continue
             elif re.match(pattern, sub_id) is None:
