@@ -38,9 +38,7 @@ def start_mrt(mode: Literal['thought', 'breath', 'color'], cfg_task: Dictm):
     if o_path:
         recorder.init_monitor().init_record(o_path + '.eeg')
     mrt.run()
-    print('debug1')
     recorder.stop_record()
-    print('debug1')
     mrt.pbar.close()
 
 
@@ -90,8 +88,7 @@ while True:
     phase = input('\n'.join(phase_menu + ('\n',)))
 
     if phase == 'i':
-        inst_test(display, button,
-                  Dictm(cfg.mrt_base | cfg.mrt_eegonly), cfg.display)
+        inst_test(display, button, cfg.mrt_base | cfg.mrt_eegonly, cfg.display)
 
     elif phase == 'p':
         cfg_task = cfg.mrt_base | cfg.mrt_practice
