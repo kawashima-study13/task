@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Any, Sequence, List
+from typing import Optional, Any, Sequence, Tuple, List
 from pathlib import Path
 import random
 
@@ -17,7 +17,8 @@ from .sound import Beep
 
 class MRT(Task):
     def __init__(self, display: Display, button: Button, stimset: tuple[tuple],
-                 probe: Probe, cfg_mrt: Dictm, o_path: str | Path | None):
+                 probe: Probe | Tuple[Probe], cfg_mrt: Dictm,
+                 o_path: str | Path | None):
         super().__init__(display, button, stimset, cfg_mrt, o_path)
         params = self.cfg.beep_dursec, self.cfg.use_ppsound
         self.data: List[Any] = []
@@ -176,6 +177,11 @@ class MRTSimul(MRT):
             self.display.disp_text('+')
             self.wait_mripulse(self.cfg.n_mripulse_towait_aft_voltune)
 
+
+class MRTPractice(MRT):
+    def _present_probe(self):
+        return self.probe[self.progress.block].present(
+            f'{self.progress.block + 1}/{len(self.stimset)}')
 
 class MRTColor(MRT):
     def _gen_color(self):

@@ -6,7 +6,7 @@ from src.tool.io import load_config, load_csv
 from src.tool.dataclass import Dictm
 from src.brainvision.brainvision import BrainVisionRec
 from src.ppwrapper.interface import Display, Button
-from src.mrt.mrt import MRT, MRTColor
+from src.mrt.mrt import MRT, MRTPractice, MRTColor
 from src.general.subjectpath import SubDir
 from src.general.inst_test import inst_test
 from src.probe.probe import Probe
