@@ -128,6 +128,8 @@ while True:
 
             if mrt_type == mrt_types[-1]:
                 break
+
+            display.disp_text('お疲れさまでした。\nしばらくご休憩ください。')
             button.wait_with_stdtimer()
 
     elif phase == 'e':
