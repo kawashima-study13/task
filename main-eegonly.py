@@ -35,6 +35,10 @@ def start_mrt(mode: Literal['thought', 'breath', 'color'], cfg_task: Dictm):
     mrt = mrtclass(
         display, button, stimset, probe, cfg_task,
         o_path=o_path + '.csv' if o_path else None)
+
+    display.disp_text(f'MRT ({mode}) is ready, press any key and start.')
+    button.wait_keys()
+
     if o_path:
         recorder.init_monitor().init_record(o_path + '.eeg')
     mrt.run()
@@ -76,8 +80,6 @@ display = Display(cfg.display.size, cfg.display.screen_id,
 button = Button()
 recorder = BrainVisionRec(cfg.recorder.path_recapp, maximize_window=True,
                           locfile=cfg.recorder.path_recloc)
-recorder.open_workspace(cfg.recorder.name_workspace)
-recorder.init_monitor()
 
 sub_dir = SubDir(cfg.misc.dir_save)
 sub_dir.ask_id('Enter sub. ID (s3001~): ', cfg.misc.reg_subid).make_dir()
@@ -102,6 +104,9 @@ while True:
         practice_mrt.run()
 
     elif phase in mrt_types:
+        recorder.open_workspace(cfg.recorder.name_workspace)
+        recorder.init_monitor()
+
         mrt_types_ = tuple(mrt_types)
         for mrt_type in mrt_types_:  # tuple because content of mrt_types pops
             if mrt_type == phase:
