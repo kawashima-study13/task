@@ -178,11 +178,6 @@ class MRTSimul(MRT):
             self.wait_mripulse(self.cfg.n_mripulse_towait_aft_voltune)
 
 
-class MRTPractice(MRT):
-    def _present_probe(self):
-        return self.probe[self.progress.block].present(
-            f'{self.progress.block + 1}/{len(self.stimset)}')
-
 class MRTColor(MRT):
     def _gen_color(self):
         MAX_BRIGHT = .1
