@@ -41,9 +41,10 @@ def start_mrt(mode: Literal['thought', 'breath', 'color'], cfg_task: Dictm):
 
     if o_path:
         recorder.init_monitor().init_record(o_path + '.eeg')
-    mrt.run()
+    finished_successfully = mrt.run()
     recorder.stop_record()
     mrt.pbar.close()
+    return finished_successfully
 
 
 def order_mrt(sub_id: str | None) -> Tuple[List, List]:
@@ -116,15 +117,18 @@ while True:
         for mrt_type in mrt_types:
             if mrt_type == 't':
                 cfg_task = cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_thought
-                start_mrt('thought', cfg_task)
+                finished_successfully = start_mrt('thought', cfg_task)
 
             if mrt_type == 'b':
                 cfg_task = cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_breath
-                start_mrt('breath', cfg_task)
+                finished_successfully = start_mrt('breath', cfg_task)
 
             if mrt_type == 'c':
                 cfg_task = cfg.mrt_base | cfg.mrt_eegonly | cfg.mrt_color
-                start_mrt('color', cfg_task)
+                finished_successfully = start_mrt('color', cfg_task)
+
+            if not finished_successfully:
+                break
 
             if mrt_type == mrt_types[-1]:
                 break

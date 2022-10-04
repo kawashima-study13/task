@@ -56,6 +56,8 @@ class Task:
             self.progress.block = i
             self.run_block(stims)
         self.run_task_tail()
+        finished_successfully = True
+        return finished_successfully
 
     def run_task_head(self):
         """Called from self.run(), override and use"""
