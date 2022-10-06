@@ -142,42 +142,6 @@ class MRT(Task):
         if self.button.abort: return
 
 
-class MRTSimul(MRT):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def wait_mripulse(self, n_pulse):
-        for n in range(n_pulse, 0, -1):
-            print(f'(Waiting MRI pulses: {n})')
-            self.button.wait_keys(keys=BUTTONS.PULSE)
-
-    def _run_test_volume(self):
-        self.display.disp_text(('そのままお待ちください。',
-                                '(Press ENTER to test vol)'))
-        self.button.wait_keys(keys=['return'])
-
-        self.display.disp_text('+')
-        self.wait_mripulse(self.cfg.n_mripulse_towait_bfr_voltune)
-
-        self.display.disp_text(('２種類の音が聞こえたら',
-                                '上ボタンで課題開始',
-                                '聞こえなかったら',
-                                '下ボタン'))
-        self.button.clear()
-
-        key = self._metronome(BUTTONS.MAIN + BUTTONS.SUB)
-        if self.button.abort: return
-        if key in BUTTONS.SUB:
-            self.display.disp_text(('そのままお待ちください。',
-                                    '(Volume is too low!',
-                                    'press QUIT key)'))
-            self.button.wait(float('inf'))
-            return
-        if key in BUTTONS.MAIN:
-            self.display.disp_text('+')
-            self.wait_mripulse(self.cfg.n_mripulse_towait_aft_voltune)
-
-
 class MRTColor(MRT):
     def _gen_color(self):
         MAX_BRIGHT = .1
