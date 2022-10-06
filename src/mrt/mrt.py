@@ -27,9 +27,11 @@ class MRT(Task):
                          normal=Beep(self.cfg.normal_hz, *params))
         self.probe = probe
 
-    def log(self, message: str | tuple, code: str, value: Any=None):
+    def log(self, message: str | tuple,
+            code: Optional[str]=None, value: Any=None):
         super().log(message, code)
-        self.trigger.write(code)
+        if code:
+            self.trigger.write(code)
         self.data.append([
             self.progress.block, self.progress.trial, code,
             self.timer.task.getTime(), self.timer.block.getTime(),
@@ -153,7 +155,9 @@ class MRTColor(MRT):
         return color_h, color_s, color_v
 
     def _present_probe(self):
-        self.probe.additional_text.setColor(self._gen_color(), 'hsv')
+        color = self._gen_color()
+        self.probe.additional_text.setColor(color, 'hsv')
+        self.log(f'Color {color} will be presented', value=color)
         return self.probe.present(
             f'{self.progress.block + 1}/{len(self.stimset)}\n'
             '⬛')
