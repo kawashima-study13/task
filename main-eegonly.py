@@ -6,7 +6,7 @@ from src.tool.io import load_config, load_csv
 from src.tool.dataclass import Dictm
 from src.brainvision.brainvision import BrainVisionRec
 from src.ppwrapper.interface import Display, Button
-from src.mrt.mrt import MRT, MRTPractice, MRTColor
+from src.mrt.mrt import MRT, MRTPractice, MRTColor, MRTBreath
 from src.general.subjectpath import SubDir
 from src.general.inst_test import inst_test
 from src.probe.probe import Probe
@@ -31,7 +31,10 @@ def start_mrt(mode: Literal['thought', 'breath', 'color'], cfg_task: Dictm):
 
     stimset = load_csv(cfg_task.path_stim)
 
-    mrtclass = MRTColor if mode == 'color' else MRT
+    mrtclass = MRT
+    mrtclass = MRTColor if mode == 'color' else mrtclass
+    mrtclass = MRTBreath if mode == 'breath' else mrtclass
+
     mrt = mrtclass(
         display, button, stimset, probe, cfg_task,
         o_path=o_path + '.csv' if o_path else None)

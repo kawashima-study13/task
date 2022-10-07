@@ -144,6 +144,41 @@ class MRT(Task):
         if self.button.abort: return
 
 
+class MRTBreath(MRT):
+    def run_task_head(self):
+        if self.button.abort: return
+        self._breath_sensing()
+        super().run_task_head()
+
+    def _breath_sensing(self):
+        """
+        Dummy breath sensing phase to support the cover story.
+        """
+        SENSING_SEC = 15.
+        SENSING_SEC_SHORT = 10.
+
+        self.display.disp_text(('これから事前測定を始めます。',
+                                '浅めの呼吸を続けてください。',
+                                'Press any key.'))
+        self.button.wait_keys()
+        self.display.disp_text('浅めの呼吸を続けてください。')
+        self.button.wait(SENSING_SEC)
+        self.display.disp_text(('事前測定を続けます。',
+                                '次は深めの呼吸を続けてください。',
+                                'Press any key.'))
+        self.button.wait_keys()
+        self.display.disp_text('深めの呼吸を続けてください。')
+        self.button.wait(SENSING_SEC)
+        self.display.disp_text(('Error.',
+                                'Press any key and retry.'))
+        self.button.wait_keys()
+        self.display.disp_text('深めの呼吸を続けてください。')
+        self.button.wait(SENSING_SEC_SHORT)
+        self.display.disp_text(('呼吸の事前測定が完了しました。',
+                                'Press any key to continue.'))
+        self.button.wait_keys()
+
+
 class MRTColor(MRT):
     def _gen_color(self):
         MAX_BRIGHT = .1
