@@ -55,6 +55,7 @@ class Probe:
 
 
     def present(self, text: str='') -> int | None:
+        self.window.winHandle.activate()
         self.additonal_text.setText(text)
         while self.scale.noResponse:
             self.additonal_text.draw()
