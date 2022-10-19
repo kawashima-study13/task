@@ -14,8 +14,14 @@ MISCWINDOWTITLE = 'Recorder2'
 
 class _Window:
     def __init__(self, path_app: Pathlike, window_title: str):
+        self.no_app_mode = False
         self.window = self._get_window(window_title)
         if self.window is None:
+            if not Path(path_app).exists():
+                print('Recorder app was not found.')
+                self.window = None
+                self.no_app_mode = True
+                return
             startfile(str(path_app))
             while True:
                 self.window = self._get_window(window_title)
@@ -23,6 +29,14 @@ class _Window:
                     break
                 sleep(.5)
 
+    def return_if_noapp(func):
+        def wrapper(self, *args, **kwargs):
+            if self.no_app_mode:
+                return None
+            return func(self, *args, **kwargs)
+        return wrapper
+
+    @return_if_noapp
     def _get_window(self, window_title):
         windows = pyautogui.getWindowsWithTitle(window_title)
         if len(windows) > 0:
@@ -31,12 +45,15 @@ class _Window:
             return windows[0]
         return None
         
+    @return_if_noapp
     def maximize(self):
         self.window.maximize()
 
+    @return_if_noapp
     def activate(self):
         self.window.activate()
 
+    @return_if_noapp
     def shortcut_open(self):
         self.window.activate()
         pyautogui.keyDown('ctrl')
