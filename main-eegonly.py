@@ -55,7 +55,7 @@ def order_mrt(sub_id: str | None) -> Tuple[List, List]:
     N_PATTERN = 6
     MRT_TYPES = ('t', 'b', 'c')
     MRT_MESSAGES = (
-        't. Run MRT with 3-type probes',
+        't. Run MRT with thought probe',
         'b. Run MRT with breath probe',
         'c. Run MRT with color probe')
     BASE_MENU = (
@@ -64,7 +64,7 @@ def order_mrt(sub_id: str | None) -> Tuple[List, List]:
         '',
         'e. End',
         'i. Instrument test',
-        'p. Practice MRT with thought probe',
+        'p. Practice MRT with 3-type probes',
     )
 
     if sub_id is None:
