@@ -55,7 +55,7 @@ def order_mrt(sub_id: str | None) -> Tuple[List, List]:
     N_PATTERN = 6
     MRT_TYPES = ('t', 'b', 'c')
     MRT_MESSAGES = (
-        't. Run MRT with thought probe',
+        't. Run MRT with 3-type probes',
         'b. Run MRT with breath probe',
         'c. Run MRT with color probe')
     BASE_MENU = (
