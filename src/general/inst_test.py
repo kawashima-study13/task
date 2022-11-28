@@ -30,14 +30,15 @@ def inst_test(display: Display, button: Button, cfg_task: Dictm, cfg_display: Di
             beep_norm.play()
         elif key in BUTTONS.MAIN:
             disp(display, lightbox, "MAIN button")
+            trigger.write(CODES.MISC)
         elif key in BUTTONS.SUB:
             disp(display, lightbox, "SUB button")
+            trigger.write(CODES.MISC)
         elif key in BUTTONS.PULSE:
             disp(display, lightbox, "MRI Pulse")
+            trigger.write(CODES.MISC)
         else: 
             disp(display, lightbox, key)
-        if key is not None:
-            trigger.write(CODES.MISC)
 
 
 if __name__ == '__main__':
