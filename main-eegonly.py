@@ -94,6 +94,7 @@ while True:
     phase = input('\n'.join(phase_menu + ('\n',)))
 
     if phase == 'i':
+        recorder.init_monitor()
         inst_test(display, button, cfg.mrt_base | cfg.mrt_eegonly, cfg.display)
 
     elif phase == 'p':
