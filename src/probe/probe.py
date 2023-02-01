@@ -3,12 +3,14 @@ from typing import Optional
 from pathlib import Path
 
 from psychopy import visual
+from psychopy.hardware import keyboard
 
 from ..tool.io import load_config
 from ..tool.dataclass import Dictm
 from ..const import BUTTONS
 from ..ppwrapper.interface import Display
 from ..general.lightbox import LightBox
+from ..mrt.sound import Beep
 
 
 class Probe:
@@ -53,8 +55,15 @@ class Probe:
             maxTime=wait_sec,
             )
 
+    def _present_beep(self, beep: Beep):
+        _BEEPKEYS = ['c']
+        _kb = keyboard.Keyboard()
+        _pressed_keys = _kb.getKeys(keyList=_BEEPKEYS)
+        if _pressed_keys:
+            beep.play()
 
     def present(self, text: str='') -> int | None:
+        _beep = Beep(hz=500., dursec=1., multithread=True)  # for the volume-change bug.
         self.window.winHandle.activate()
         self.additional_text.setText(text)
         while self.scale.noResponse:
@@ -63,6 +72,7 @@ class Probe:
             self.scale.draw()
             if self.lightbox:
                 self.lightbox.box.draw()  # type: ignore # lightbox.draw() duplicates .flip()
+            self._present_beep(_beep)
             self.window.flip()
         if self.scale.timedOut:
             self.scale.reset()
@@ -78,8 +88,7 @@ if __name__ == '__main__':
                       cfg.color.back, cfg.color.main)
     display.build()
 
-    print('Probe for simultaneous recording')
     probe = Probe(display.window, 'intro.jpg', cfg.color_name, rate_y_text=-.2,
-                  textsize=48., wait_sec=5.,
+                  textsize=48.,
                   lightbox=LightBox(display.window, cfg.display))
     print(probe.present('12/18'))
