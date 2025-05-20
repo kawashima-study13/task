@@ -50,32 +50,19 @@ def start_mrt(mode: Literal['thought', 'breath', 'color'], cfg_task: Dictm):
     return finished_successfully
 
 
-def order_mrt(sub_id: str | None) -> Tuple[List, List]:
-    FIXED_ID = 3000
-    N_PATTERN = 6
-    MRT_TYPES = ('t', 'b', 'c')
-    MRT_MESSAGES = (
-        't. Run MRT with thought probe',
-        'b. Run MRT with breath probe',
-        'c. Run MRT with color probe')
+def order_mrt() -> Tuple[List, List]:
+    MRT_TYPES = ('t',)
+    MRT_MESSAGES = ('t. Run MRT',)
     BASE_MENU = (
         '',
         'Input phase char and enter:'
         '',
         'e. End',
         'i. Instrument test',
-        'p. Practice MRT with 3-type probes',
+        'p. Practice MRT',
     )
 
-    if sub_id is None:
-        return MRT_TYPES, BASE_MENU + MRT_MESSAGES
-
-    sub_id = int(sub_id[1:]) - FIXED_ID
-    pattern = sub_id % N_PATTERN
-    mrt_types = list(permutations(MRT_TYPES))[pattern]
-    mrt_menu = list(permutations(MRT_MESSAGES))[pattern]
-    phase_menu = BASE_MENU + mrt_menu
-    return list(mrt_types), phase_menu
+    return MRT_TYPES, BASE_MENU + MRT_MESSAGES
 
 
 cfg = load_config('config/task.ini')
@@ -86,9 +73,9 @@ recorder = BrainVisionRec(cfg.recorder.path_recapp, maximize_window=True,
                           locfile=cfg.recorder.path_recloc)
 
 sub_dir = SubDir(cfg.misc.dir_save)
-sub_dir.ask_id('Enter sub. ID (s3001~): ', cfg.misc.reg_subid).make_dir()
+sub_dir.ask_id('Enter sub. ID (s001~): ', cfg.misc.reg_subid).make_dir()
 
-mrt_types, phase_menu = order_mrt(sub_dir.sub_id)
+mrt_types, phase_menu = order_mrt()
 
 while True:
     phase = input('\n'.join(phase_menu + ('\n',)))
@@ -99,10 +86,7 @@ while True:
 
     elif phase == 'p':
         cfg_task = cfg.mrt_base | cfg.mrt_practice
-        probes = (
-            make_probe(display, cfg_task, cfg.color_name, 'intro_thought.jpg'),
-            make_probe(display, cfg_task, cfg.color_name, 'intro_breath.jpg'),
-            make_probe(display, cfg_task, cfg.color_name, 'intro_color.jpg'))
+        probes = (make_probe(display, cfg_task, cfg.color_name, 'intro_thought.jpg'),) * 3
         stimset_practice = load_csv(cfg_task.path_stim)
         practice_mrt = MRTPractice(
             display, button, stimset_practice, probes, cfg_task, o_path=None)
